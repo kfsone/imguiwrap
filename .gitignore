@@ -1,0 +1,11 @@
+# IDEs
+.vs
+.vscode
+.idea
+
+# Generated directories
+build
+out
+Debug
+Release
+RelWithDebInfo
