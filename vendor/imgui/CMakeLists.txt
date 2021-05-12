@@ -10,6 +10,8 @@ set(IMGUI_RENDERER_BACKEND "opengl3" CACHE STRING "Specify which imgui renderer 
 
 set(IMGUI_GL3W_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/examples/libs/gl3w)
 
+find_package(OpenGL REQUIRED)
+
 set(
 	IMGUI_SOURCES
 
@@ -55,25 +57,11 @@ target_include_directories(
 	${IMGUI_GL3W_PATH}
 )
 
-
 target_link_libraries(
 	imgui
 
 	PUBLIC
 
-	opengl32.lib
-	gdi32.lib
-	shell32.lib
-
 	glfw
+	OpenGL::GL
 )
-
-if (WIN32)
-	###TODO: FindPackage
-	target_link_libraries(
-		imgui
-
-		PUBLIC
-
-	)
-endif()
