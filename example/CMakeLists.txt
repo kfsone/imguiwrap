@@ -4,15 +4,24 @@ set(CMAKE_CXX_STANDARD "20")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(
-	simple_example
-
-	main.cpp
+	basic_example
+	basic_example.cpp
 )
 
 target_link_libraries(
-	simple_example
-
+	basic_example
 	PUBLIC
-
 	imguiwrap
 )
+
+add_executable(
+	dear_example
+	dear_example.cpp
+)
+
+target_link_libraries(
+	dear_example
+	PUBLIC
+	imguiwrap
+)
+

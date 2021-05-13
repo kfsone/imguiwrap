@@ -13,6 +13,7 @@ add_library(
 	imguiwrap.cpp
 	imguiwrap.h
 	imguiwrap.helpers.h
+	imguiwrap.dear.h
 )
 
 target_include_directories(
