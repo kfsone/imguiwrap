@@ -5,7 +5,7 @@ static void glfw_error_callback(int error, const char* description)
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-int imgui_main(int, char**, void (*mainFn)(void))
+int imgui_main(int, char**, ImGuiWrapperFn mainFn)
 {
     // Setup window
     glfwSetErrorCallback(glfw_error_callback);
@@ -82,8 +82,10 @@ int imgui_main(int, char**, void (*mainFn)(void))
     // Our state
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+	std::optional<int> exitCode {};
+
     // Main loop
-    while (!glfwWindowShouldClose(window))
+    while (!exitCode.has_value() && !glfwWindowShouldClose(window))
     {
         // Poll and handle events (inputs, window resize, etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
@@ -97,7 +99,7 @@ int imgui_main(int, char**, void (*mainFn)(void))
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        mainFn();
+		exitCode = mainFn();
 
         // Rendering
         ImGui::Render();
@@ -119,5 +121,5 @@ int imgui_main(int, char**, void (*mainFn)(void))
     glfwDestroyWindow(window);
     glfwTerminate();
 
-    return 0;
+    return exitCode.value_or(0);
 }

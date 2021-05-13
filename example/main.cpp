@@ -2,12 +2,14 @@
 
 #include <string_view>
 
-void windowFn()
+ImGuiWrapperReturnType
+windowFn()
 {
     static bool show_visualizer { true };
     DEFER(ImGui::End(););
+	// If the user closes the visualizer, exit with rc 0.
     if (!ImGui::Begin("Visualizer", &show_visualizer))
-        return;
+        return 0;
 
     ImGui::Text("hello");
     if (ImGui::BeginTabBar("##TabBar"))
@@ -34,6 +36,9 @@ void windowFn()
             ImGui::Text("... prototypes...");
         }
     }
+
+	// Return nothing.
+	return {};
 }
 
 int

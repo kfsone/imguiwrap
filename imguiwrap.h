@@ -4,7 +4,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <GLES2/gl2.h>
@@ -37,4 +37,10 @@ using namespace gl;
 // Include glfw3.h after our OpenGL definitions
 #include <GLFW/glfw3.h>
 
-extern int imgui_main(int, char**, void (*mainFn)(void));
+#include <functional>
+#include <optional>
+
+using ImGuiWrapperReturnType = std::optional<int>;
+using ImGuiWrapperFn = std::function<ImGuiWrapperReturnType()>;
+
+extern int imgui_main(int, char**, ImGuiWrapperFn mainFn);
