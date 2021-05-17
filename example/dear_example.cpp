@@ -1,6 +1,6 @@
 /* Demonstration of using the imguiwrapper "dear::" functions.
 
-    imguiwrapper.dear.h provides a set of helpers in the "dear" namespace,
+    imguiwrap.dear.h provides a set of helpers in the "dear" namespace,
     which invoke the appropriate "Begin" method and ensure that the
     relevant "End" function is called after executing a given block of code.
 

@@ -39,7 +39,7 @@ order. To help with this, I've provided a rust/go-style 'defer' macro:
 
 Wouldn't it be nice if you didn't have to manually track all those `Begin/End()`s?
 
-The `dear` namespace in `imguiwrapper.dear.h` provides helpers for exactly this. These
+The `dear` namespace in `imguiwrap.dear.h` provides helpers for exactly this. These
 create temporary objects (which the compiler can eliminate) that implement an `&&`
 operator that allows them to (optionally) call code, which can be either a named
 function or a lambda.
