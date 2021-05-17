@@ -1,5 +1,10 @@
 #pragma once
 
+// define IMGUI_NOEXCEPT as 'noexcept' to enable noexcept behavior (requires compatible imgui.h)
+#ifndef IMGUI_NOEXCEPT
+# define IMGUI_NOEXCEPT
+#endif
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
