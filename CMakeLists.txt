@@ -32,6 +32,19 @@ target_link_libraries(
 	imgui
 )
 
+if (WIN32)
+	string (REGEX REPLACE "/EH[a-z]+-?" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+	set (IMGW_NO_EXCEPTIONS "/EHc-")
+	set (IMGW_ALL_WARNINGS  "/W3")
+	set (IMGW_NO_RTTI "/GR-")
+else ()
+	set (IMGW_NO_EXCEPTIONS "-fno-exceptions")
+	set (IMGW_ALL_WARNINGS  "-w3")
+	set (IMGW_NO_RTTI "-fno-rtti")
+endif ()
+
+target_compile_options(imguiwrap PRIVATE ${IMGW_NO_RTTI} ${IMGW_NO_EXCEPTIONS} ${IMGW_ALL_WARNINGS})
+
 # Are we standalone?
 if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
 	set(IMGUIWRAP_STANDALONE TRUE)

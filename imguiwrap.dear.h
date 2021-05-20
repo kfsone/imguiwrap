@@ -5,7 +5,6 @@
 namespace dear
 {
 
-
 // scoped_effect is a helper that uses automatic object lifetime to control
 // the invocation of a callable after potentially calling additional code,
 // allowing for easy inline creation of scope guards.
@@ -59,56 +58,56 @@ struct Begin : public ScopeWrapper<Begin, true>
 {
     // Invoke Begin and guarantee that 'End' will be called.
     Begin(const char* title, bool* open=nullptr, ImGuiWindowFlags flags=0) noexcept : ScopeWrapper(ImGui::Begin(title, open, flags)) {}
-    static constexpr void(*dtor)() IMGUI_NOEXCEPT = ImGui::End;
+	static void dtor() noexcept { ImGui::End(); }
 };
 
 struct Child : public ScopeWrapper<Child, true>
 {
 	Child(const char* title, const ImVec2& size=ImVec2(0, 0), bool border=false, ImGuiWindowFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginChild(title, size, border, flags)) {}
 	Child(ImGuiID id, const ImVec2& size=ImVec2(0, 0), bool border=false, ImGuiWindowFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginChild(id, size, border, flags)) {}
-	static constexpr void(*dtor)() IMGUI_NOEXCEPT = ImGui::EndChild;
+	static void dtor() noexcept { ImGui::EndChild(); }
 };
 
 struct Group : public ScopeWrapper<Group>
 {
 	Group() noexcept : ScopeWrapper(true) { ImGui::BeginGroup(); }
-	static constexpr void(*dtor)() IMGUI_NOEXCEPT = ImGui::EndGroup;
+	static void dtor() noexcept { ImGui::EndGroup(); }
 };
 
 struct Combo : public ScopeWrapper<Combo>
 {
 	Combo(const char* label, const char* preview, ImGuiComboFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginCombo(label, preview, flags)) {}
-	static constexpr void(*dtor)() IMGUI_NOEXCEPT = ImGui::EndCombo;
+	static void dtor() noexcept { ImGui::EndCombo(); }
 };
 
 struct ListBox : public ScopeWrapper<ListBox>
 {
 	ListBox(const char* label, const ImVec2& size=ImVec2(0, 0)) noexcept : ScopeWrapper(ImGui::BeginListBox(label, size)) {}
-	static constexpr void(*dtor)() IMGUI_NOEXCEPT = ImGui::EndListBox;
+	static void dtor() noexcept { ImGui::EndListBox(); }
 };
 
 struct MenuBar : public ScopeWrapper<MenuBar>
 {
 	MenuBar() noexcept : ScopeWrapper(ImGui::BeginMenuBar()) {}
-	static constexpr void(*dtor)() IMGUI_NOEXCEPT = ImGui::EndMenuBar;
+	static void dtor() noexcept { ImGui::EndMenuBar(); }
 };
 
 struct MainMenuBar : public ScopeWrapper<MainMenuBar>
 {
 	MainMenuBar() noexcept : ScopeWrapper(ImGui::BeginMainMenuBar()) {}
-	static constexpr void(*dtor)() IMGUI_NOEXCEPT = ImGui::EndMainMenuBar;
+	static void dtor() noexcept { ImGui::EndMainMenuBar(); }
 };
 
 struct Menu : public ScopeWrapper<Menu>
 {
 	Menu(const char* label, bool enabled=true) noexcept : ScopeWrapper(ImGui::BeginMenu(label, enabled)) {}
-	static constexpr void(*dtor)() IMGUI_NOEXCEPT = ImGui::EndMenu;
+	static void dtor() noexcept { ImGui::EndMenu(); }
 };
 
 struct Tooltip : public ScopeWrapper<Tooltip>
 {
 	Tooltip() noexcept : ScopeWrapper(true) { ImGui::BeginTooltip(); }
-	static constexpr void(*dtor)() IMGUI_NOEXCEPT = ImGui::EndTooltip;
+	static void dtor() noexcept { ImGui::EndTooltip(); }
 };
 
 struct Popup : public ScopeWrapper<Popup>
@@ -124,25 +123,32 @@ struct Popup : public ScopeWrapper<Popup>
 	Popup(modal, const char* name, bool* p_open=NULL, ImGuiWindowFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginPopupModal(name, p_open, flags)) {}
 	static Popup Modal(const char* name, bool* p_open=NULL, ImGuiWindowFlags flags=0) noexcept { return Popup(modal{}, name, p_open, flags); }
 
-	static constexpr void(*dtor)() IMGUI_NOEXCEPT = ImGui::EndPopup;
+	static void dtor() noexcept { ImGui::EndPopup(); }
 };
 
 struct PopupModal : public ScopeWrapper<PopupModal>
 {
 	PopupModal(const char* name, bool* p_open=NULL, ImGuiWindowFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginPopupModal(name, p_open, flags)) {}
-	static constexpr void(*dtor)() IMGUI_NOEXCEPT = ImGui::EndPopup;
+	static void dtor() noexcept { ImGui::EndPopup(); }
 };
 
 struct TabBar : public ScopeWrapper<TabBar>
 {
     TabBar(const char* name, ImGuiTabBarFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginTabBar(name, flags)) {}
-    static constexpr void(*dtor)() IMGUI_NOEXCEPT = ImGui::EndTabBar;
+    static void dtor() noexcept { ImGui::EndTabBar(); }
 };
 
 struct TabItem : public ScopeWrapper<TabItem>
 {
     TabItem(const char* name, bool* open=nullptr, ImGuiTabItemFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginTabItem(name, open, flags)) {}
-    static constexpr void(*dtor)() IMGUI_NOEXCEPT = ImGui::EndTabItem;
+    static void dtor() noexcept { ImGui::EndTabItem(); }
+};
+
+struct WithStyleVar : public ScopeWrapper<WithStyleVar>
+{
+	template<class... Args>
+		WithStyleVar(Args&&... args) noexcept : ScopeWrapper(ImGui::PushStyleVar(std::forward<Args>(args)...)) {}
+	static void dtor() noexcept { ImGui::PopStyleVar(); }
 };
 
 }
