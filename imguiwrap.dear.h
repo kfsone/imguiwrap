@@ -147,7 +147,7 @@ struct TabItem : public ScopeWrapper<TabItem>
 struct WithStyleVar : public ScopeWrapper<WithStyleVar>
 {
 	template<class... Args>
-		WithStyleVar(Args&&... args) noexcept : ScopeWrapper(ImGui::PushStyleVar(std::forward<Args>(args)...)) {}
+		WithStyleVar(Args&&... args) noexcept : ScopeWrapper(true) { ImGui::PushStyleVar(std::forward<Args>(args)...); }
 	static void dtor() noexcept { ImGui::PopStyleVar(); }
 };
 
