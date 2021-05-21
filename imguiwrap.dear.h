@@ -132,7 +132,7 @@ struct CollapsingHeader : public ScopeWrapper<CollapsingHeader>
 };
 
 template<bool Separated = false>
-struct TreeNode : public ScopeWrapper<TreeNode>
+struct TreeNode : public ScopeWrapper<TreeNode<Separated>>
 {
     template<typename... Args>
     TreeNode(Args&&... args) noexcept : ScopeWrapper(ImGui::TreeNode(std::forward<Args>(args)...)) {}
