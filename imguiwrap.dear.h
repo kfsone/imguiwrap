@@ -7,7 +7,13 @@
 namespace dear
 {
 
-extern void EditTableFlags(const char* window_title, bool* showing, int* flags);
+// EditTableFlags provides a window with checkboxes/selects for all of the
+// ImGuiTableFlags options so that a flags property can be edited in real-time.
+extern void EditTableFlags(const char* editWindowTitle, bool* showing, ImGuiTableFlags* flags) noexcept;
+
+// EditWindowFlags provides a window which checkboxes for all of the
+// ImGuiWindowFlags options so that a flags property can be edited in real-time.
+extern void EditWindowFlags(const char* editWindowTitle, bool* showing, ImGuiWindowFlags* flags) noexcept;
 
 // scoped_effect is a helper that uses automatic object lifetime to control
 // the invocation of a callable after potentially calling additional code,

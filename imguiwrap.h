@@ -48,4 +48,4 @@ using namespace gl;
 using ImGuiWrapperReturnType = std::optional<int>;
 using ImGuiWrapperFn = std::function<ImGuiWrapperReturnType()>;
 
-extern int imgui_main(int, char**, ImGuiWrapperFn mainFn);
+extern int imgui_main(int, char**, ImGuiWrapperFn mainFn) noexcept;

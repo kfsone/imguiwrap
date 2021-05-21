@@ -4,12 +4,12 @@
 #include "imguiwrap.helpers.h"
 #include "imguiwrap.dear.h"
 
-static void glfw_error_callback(int error, const char* description)
+static void glfw_error_callback(int error, const char* description) noexcept
 {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-int imgui_main(int, char**, ImGuiWrapperFn mainFn)
+int imgui_main(int, char**, ImGuiWrapperFn mainFn) noexcept
 {
     // Setup window
     glfwSetErrorCallback(glfw_error_callback);
@@ -128,7 +128,7 @@ int imgui_main(int, char**, ImGuiWrapperFn mainFn)
     return exitCode.value_or(0);
 }
 
-static void editWindow(const char* title, bool* showing, std::function<void(void)> impl) noexcept
+static void flagsWindow(const char* title, bool* showing, std::function<void(void)> impl) noexcept
 {
 	if (showing && !*showing)
 		return;
@@ -145,9 +145,9 @@ namespace dear
 {
 
 void
-EditTableFlags(const char* title, bool* showing, ImGuiTableFlags* flags)
+EditTableFlags(const char* title, bool* showing, ImGuiTableFlags* flags) noexcept
 {
-	editWindow(title, showing, [=]{
+	flagsWindow(title, showing, [=] () noexcept {
         ImGui::CheckboxFlags("Resizable", flags, ImGuiTableFlags_Resizable);
         ImGui::CheckboxFlags("Reorderable", flags, ImGuiTableFlags_Reorderable);
         ImGui::CheckboxFlags("Hideable", flags, ImGuiTableFlags_Hideable);
@@ -181,6 +181,33 @@ EditTableFlags(const char* title, bool* showing, ImGuiTableFlags* flags)
         ImGui::CheckboxFlags("ScrollX", flags, ImGuiTableFlags_ScrollX);
         ImGui::CheckboxFlags("ScrollY", flags, ImGuiTableFlags_ScrollY);
 	});
+}
+
+void
+EditWindowFlags(const char* title, bool* showing, ImGuiWindowFlags* flags) noexcept
+{
+    flagsWindow(title, showing, [=] () noexcept {
+        ImGui::CheckboxFlags("NoTitleBar", flags, ImGuiWindowFlags_NoTitleBar);
+        ImGui::CheckboxFlags("NoResize", flags, ImGuiWindowFlags_NoResize);
+        ImGui::CheckboxFlags("NoMove", flags, ImGuiWindowFlags_NoMove);
+        ImGui::CheckboxFlags("NoScrollbar", flags, ImGuiWindowFlags_NoScrollbar);
+        ImGui::CheckboxFlags("NoScrollWithMouse", flags, ImGuiWindowFlags_NoScrollWithMouse);
+        ImGui::CheckboxFlags("NoCollapse", flags, ImGuiWindowFlags_NoCollapse);
+        ImGui::CheckboxFlags("AlwaysAutoResize", flags, ImGuiWindowFlags_AlwaysAutoResize);
+        ImGui::CheckboxFlags("NoBackground", flags, ImGuiWindowFlags_NoBackground);
+        ImGui::CheckboxFlags("NoSavedSettings", flags, ImGuiWindowFlags_NoSavedSettings);
+        ImGui::CheckboxFlags("NoMouseInputs", flags, ImGuiWindowFlags_NoMouseInputs);
+        ImGui::CheckboxFlags("MenuBar", flags, ImGuiWindowFlags_MenuBar);
+        ImGui::CheckboxFlags("HorizontalScrollbar", flags, ImGuiWindowFlags_HorizontalScrollbar);
+        ImGui::CheckboxFlags("NoFocusOnAppearing", flags, ImGuiWindowFlags_NoFocusOnAppearing);
+        ImGui::CheckboxFlags("NoBringToFrontOnFocus", flags, ImGuiWindowFlags_NoBringToFrontOnFocus);
+        ImGui::CheckboxFlags("AlwaysVerticalScrollbar", flags, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+        ImGui::CheckboxFlags("AlwaysHorizontalScrollbar", flags, ImGuiWindowFlags_AlwaysHorizontalScrollbar);
+        ImGui::CheckboxFlags("AlwaysUseWindowPadding", flags, ImGuiWindowFlags_AlwaysUseWindowPadding);
+        ImGui::CheckboxFlags("NoNavInputs", flags, ImGuiWindowFlags_NoNavInputs);
+        ImGui::CheckboxFlags("NoNavFocus", flags, ImGuiWindowFlags_NoNavFocus);
+        ImGui::CheckboxFlags("UnsavedDocument", flags, ImGuiWindowFlags_UnsavedDocument);
+    });
 }
 
 }
