@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>  // std::forward etc
+
 #include "imgui.h"
 
 namespace dear
@@ -68,6 +70,12 @@ struct Child : public ScopeWrapper<Child, true>
 	static void dtor() noexcept { ImGui::EndChild(); }
 };
 
+struct ChildFrame : public ScopeWrapper<ChildFrame, true>
+{
+    template<typename... Args> ChildFrame(Args&&... args) noexcept : ScopeWrapper(ImGui::BeginChildFrame(std::forward<Args>(args)...)) {}
+    static void dtor() noexcept { ImGui::EndChildFrame(); }
+};
+
 struct Group : public ScopeWrapper<Group>
 {
 	Group() noexcept : ScopeWrapper(true) { ImGui::BeginGroup(); }
@@ -104,10 +112,35 @@ struct Menu : public ScopeWrapper<Menu>
 	static void dtor() noexcept { ImGui::EndMenu(); }
 };
 
+struct Table : public ScopeWrapper<Table>
+{
+    template<typename... Args>
+    Table(Args&&... args) noexcept : ScopeWrapper(ImGui::BeginTable(std::forward<Args>(args)...)) {}
+    static void dtor() noexcept { ImGui::EndTable(); }
+};
+
 struct Tooltip : public ScopeWrapper<Tooltip>
 {
 	Tooltip() noexcept : ScopeWrapper(true) { ImGui::BeginTooltip(); }
 	static void dtor() noexcept { ImGui::EndTooltip(); }
+};
+
+struct CollapsingHeader : public ScopeWrapper<CollapsingHeader>
+{
+    CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags) noexcept : ScopeWrapper(ImGui::CollapsingHeader(label, flags)) {}
+    inline static void dtor() noexcept {}
+};
+
+template<bool Separated = false>
+struct TreeNode : public ScopeWrapper<TreeNode>
+{
+    template<typename... Args>
+    TreeNode(Args&&... args) noexcept : ScopeWrapper(ImGui::TreeNode(std::forward<Args>(args)...)) {}
+    static void dtor() noexcept {
+        ImGui::TreePop();
+        if constexpr (Separated)
+            ImGui::Separator();
+    }
 };
 
 struct Popup : public ScopeWrapper<Popup>
