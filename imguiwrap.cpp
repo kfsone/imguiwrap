@@ -1,4 +1,8 @@
+#include <array>
+
 #include "imguiwrap.h"
+#include "imguiwrap.helpers.h"
+#include "imguiwrap.dear.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -123,3 +127,61 @@ int imgui_main(int, char**, ImGuiWrapperFn mainFn)
 
     return exitCode.value_or(0);
 }
+
+static void editWindow(const char* title, bool* showing, std::function<void(void)> impl) noexcept
+{
+	if (showing && !*showing)
+		return;
+
+	constexpr ImGuiWindowFlags editWindowFlags =
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoFocusOnAppearing |
+		ImGuiWindowFlags_AlwaysUseWindowPadding;
+
+	dear::Begin(title, showing, editWindowFlags) && impl;
+}
+
+namespace dear
+{
+
+void
+EditTableFlags(const char* title, bool* showing, ImGuiTableFlags* flags)
+{
+	editWindow(title, showing, [=]{
+        ImGui::CheckboxFlags("Resizable", flags, ImGuiTableFlags_Resizable);
+        ImGui::CheckboxFlags("Reorderable", flags, ImGuiTableFlags_Reorderable);
+        ImGui::CheckboxFlags("Hideable", flags, ImGuiTableFlags_Hideable);
+        ImGui::CheckboxFlags("Sortable", flags, ImGuiTableFlags_Sortable);
+        ImGui::CheckboxFlags("NoSavedSettings", flags, ImGuiTableFlags_NoSavedSettings);
+        ImGui::CheckboxFlags("ContextMenuInBody", flags, ImGuiTableFlags_ContextMenuInBody);
+        ImGui::CheckboxFlags("RowBg", flags, ImGuiTableFlags_RowBg);
+        ImGui::CheckboxFlags("BordersInnerH", flags, ImGuiTableFlags_BordersInnerH);
+        ImGui::CheckboxFlags("BordersOuterH", flags, ImGuiTableFlags_BordersOuterH);
+        ImGui::CheckboxFlags("BordersInnerV", flags, ImGuiTableFlags_BordersInnerV);
+        ImGui::CheckboxFlags("BordersOuterV", flags, ImGuiTableFlags_BordersOuterV);
+        ImGui::CheckboxFlags("NoBordersInBody", flags, ImGuiTableFlags_NoBordersInBody);
+        ImGui::CheckboxFlags("NoBordersInBodyUntilResize", flags, ImGuiTableFlags_NoBordersInBodyUntilResize);
+        static int sizing = 0;
+        std::array<const char*, 5> sizes = { "Default", "FixedFit", "FixedSame", "StretchProp", "StretchSame" };
+        dear::Combo("Sizing", sizes[sizing]) && [&] {
+            *flags &= ~(7 << 13);
+            for (int i = 0; i < sizes.size(); i++) {
+                if (ImGui::Selectable(sizes[i]))
+                    sizing = i;
+            }
+        };
+        *flags |= sizing << 13;
+        ImGui::CheckboxFlags("NoHostExtendX", flags, ImGuiTableFlags_NoHostExtendX);
+        ImGui::CheckboxFlags("NoHostExtendY", flags, ImGuiTableFlags_NoHostExtendY);
+        ImGui::CheckboxFlags("NoKeepColumnsVisible", flags, ImGuiTableFlags_NoKeepColumnsVisible);
+        ImGui::CheckboxFlags("PreciseWidths", flags, ImGuiTableFlags_PreciseWidths);
+        ImGui::CheckboxFlags("PadOuterX", flags, ImGuiTableFlags_PadOuterX);
+        ImGui::CheckboxFlags("NoPadOuterX", flags, ImGuiTableFlags_NoPadOuterX);
+        ImGui::CheckboxFlags("NoPadInnerX", flags, ImGuiTableFlags_NoPadInnerX);
+        ImGui::CheckboxFlags("ScrollX", flags, ImGuiTableFlags_ScrollX);
+        ImGui::CheckboxFlags("ScrollY", flags, ImGuiTableFlags_ScrollY);
+	});
+}
+
+}
+

@@ -7,6 +7,8 @@
 namespace dear
 {
 
+extern void EditTableFlags(const char* window_title, bool* showing, int* flags);
+
 // scoped_effect is a helper that uses automatic object lifetime to control
 // the invocation of a callable after potentially calling additional code,
 // allowing for easy inline creation of scope guards.
