@@ -161,15 +161,15 @@ EditTableFlags(const char* title, bool* showing, ImGuiTableFlags* flags) noexcep
         ImGui::CheckboxFlags("BordersOuterV", flags, ImGuiTableFlags_BordersOuterV);
         ImGui::CheckboxFlags("NoBordersInBody", flags, ImGuiTableFlags_NoBordersInBody);
         ImGui::CheckboxFlags("NoBordersInBodyUntilResize", flags, ImGuiTableFlags_NoBordersInBodyUntilResize);
-        static int sizing = 0;
+        int sizing = (*flags & (7 << 13)) >> 13;
         std::array<const char*, 5> sizes = { "Default", "FixedFit", "FixedSame", "StretchProp", "StretchSame" };
         dear::Combo("Sizing", sizes[sizing]) && [&] {
-            *flags &= ~(7 << 13);
             for (int i = 0; i < sizes.size(); i++) {
                 if (ImGui::Selectable(sizes[i]))
                     sizing = i;
             }
         };
+        *flags &= ~(7 << 13);
         *flags |= sizing << 13;
         ImGui::CheckboxFlags("NoHostExtendX", flags, ImGuiTableFlags_NoHostExtendX);
         ImGui::CheckboxFlags("NoHostExtendY", flags, ImGuiTableFlags_NoHostExtendY);
