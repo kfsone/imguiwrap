@@ -6,6 +6,7 @@
 
 namespace dear
 {
+static const ImVec2 Zero(0.0f, 0.0f);
 
 // EditTableFlags provides a window with checkboxes/selects for all of the
 // ImGuiTableFlags options so that a flags property can be edited in real-time.
