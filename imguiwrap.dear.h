@@ -140,15 +140,25 @@ struct CollapsingHeader : public ScopeWrapper<CollapsingHeader>
     inline static void dtor() noexcept {}
 };
 
-template<bool Separated = false>
-struct TreeNode : public ScopeWrapper<TreeNode<Separated>>
+struct TreeNode : public ScopeWrapper<TreeNode>
 {
     template<typename... Args>
-    TreeNode(Args&&... args) noexcept : ScopeWrapper(ImGui::TreeNode(std::forward<Args>(args)...)) {}
-    static void dtor() noexcept {
+    TreeNode(Args&&... args) noexcept : ScopeWrapper(ImGui::TreeNode(std::forward<Args>(args)...))
+    {
+    }
+    static void dtor() noexcept { ImGui::TreePop(); }
+};
+
+struct SeparatedTreeNode : public ScopeWrapper<SeparatedTreeNode>
+{
+    template<typename... Args>
+    SeparatedTreeNode(Args&&... args) noexcept : ScopeWrapper(ImGui::TreeNode(std::forward<Args>(args)...))
+    {
+    }
+    static void dtor() noexcept
+    {
         ImGui::TreePop();
-        if constexpr (Separated)
-            ImGui::Separator();
+        ImGui::Separator();
     }
 };
 
