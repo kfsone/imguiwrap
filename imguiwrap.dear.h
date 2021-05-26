@@ -203,4 +203,14 @@ struct WithStyleVar : public ScopeWrapper<WithStyleVar>
 	static void dtor() noexcept { ImGui::PopStyleVar(); }
 };
 
+struct ItemTooltip : public ScopeWrapper<ItemTooltip>
+{
+    ItemTooltip(ImGuiHoveredFlags flags = 0) noexcept : ScopeWrapper(ImGui::IsItemHovered(flags))
+    {
+        if (ok_)
+            ImGui::BeginTooltip();
+    }
+    static void dtor() noexcept { ImGui::EndTooltip(); }
+};
+
 }
