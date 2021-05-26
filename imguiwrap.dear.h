@@ -22,11 +22,11 @@ extern void EditWindowFlags(const char* editWindowTitle, bool* showing, ImGuiWin
 //
 // On its own, it does nothing but call the supplied function when it is
 // destroyed;
-template<typename Base, bool ForceDtor=false>
+template<typename Base, bool ForceDtor = false>
 struct ScopeWrapper
 {
     using wrapped_type = Base;
-    using self_type = ScopeWrapper<Base>;
+    using self_type    = ScopeWrapper<Base>;
 
     static constexpr bool force_dtor = ForceDtor;
 
@@ -40,8 +40,10 @@ public:
     constexpr ScopeWrapper(bool ok) noexcept : ok_{ok} {}
 
     // destructor always invokes the supplied destructor function.
-    constexpr ~ScopeWrapper() noexcept {
-        if constexpr (!force_dtor) {
+    constexpr ~ScopeWrapper() noexcept
+    {
+        if constexpr (!force_dtor)
+        {
             if (!ok_)
                 return;
         }
@@ -68,75 +70,101 @@ protected:
 struct Begin : public ScopeWrapper<Begin, true>
 {
     // Invoke Begin and guarantee that 'End' will be called.
-    Begin(const char* title, bool* open=nullptr, ImGuiWindowFlags flags=0) noexcept : ScopeWrapper(ImGui::Begin(title, open, flags)) {}
-	static void dtor() noexcept { ImGui::End(); }
+    Begin(const char* title, bool* open = nullptr, ImGuiWindowFlags flags = 0) noexcept
+        : ScopeWrapper(ImGui::Begin(title, open, flags))
+    {
+    }
+    static void dtor() noexcept { ImGui::End(); }
 };
 
 struct Child : public ScopeWrapper<Child, true>
 {
-	Child(const char* title, const ImVec2& size=ImVec2(0, 0), bool border=false, ImGuiWindowFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginChild(title, size, border, flags)) {}
-	Child(ImGuiID id, const ImVec2& size=ImVec2(0, 0), bool border=false, ImGuiWindowFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginChild(id, size, border, flags)) {}
-	static void dtor() noexcept { ImGui::EndChild(); }
+    Child(const char* title, const ImVec2& size = ImVec2(0, 0), bool border = false,
+          ImGuiWindowFlags flags = 0) noexcept
+        : ScopeWrapper(ImGui::BeginChild(title, size, border, flags))
+    {
+    }
+    Child(ImGuiID id, const ImVec2& size = ImVec2(0, 0), bool border = false, ImGuiWindowFlags flags = 0) noexcept
+        : ScopeWrapper(ImGui::BeginChild(id, size, border, flags))
+    {
+    }
+    static void dtor() noexcept { ImGui::EndChild(); }
 };
 
 struct ChildFrame : public ScopeWrapper<ChildFrame, true>
 {
-    template<typename... Args> ChildFrame(Args&&... args) noexcept : ScopeWrapper(ImGui::BeginChildFrame(std::forward<Args>(args)...)) {}
+    template<typename... Args>
+    ChildFrame(Args&&... args) noexcept : ScopeWrapper(ImGui::BeginChildFrame(std::forward<Args>(args)...))
+    {
+    }
     static void dtor() noexcept { ImGui::EndChildFrame(); }
 };
 
 struct Group : public ScopeWrapper<Group>
 {
-	Group() noexcept : ScopeWrapper(true) { ImGui::BeginGroup(); }
-	static void dtor() noexcept { ImGui::EndGroup(); }
+    Group() noexcept : ScopeWrapper(true) { ImGui::BeginGroup(); }
+    static void dtor() noexcept { ImGui::EndGroup(); }
 };
 
 struct Combo : public ScopeWrapper<Combo>
 {
-	Combo(const char* label, const char* preview, ImGuiComboFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginCombo(label, preview, flags)) {}
-	static void dtor() noexcept { ImGui::EndCombo(); }
+    Combo(const char* label, const char* preview, ImGuiComboFlags flags = 0) noexcept
+        : ScopeWrapper(ImGui::BeginCombo(label, preview, flags))
+    {
+    }
+    static void dtor() noexcept { ImGui::EndCombo(); }
 };
 
 struct ListBox : public ScopeWrapper<ListBox>
 {
-	ListBox(const char* label, const ImVec2& size=ImVec2(0, 0)) noexcept : ScopeWrapper(ImGui::BeginListBox(label, size)) {}
-	static void dtor() noexcept { ImGui::EndListBox(); }
+    ListBox(const char* label, const ImVec2& size = ImVec2(0, 0)) noexcept
+        : ScopeWrapper(ImGui::BeginListBox(label, size))
+    {
+    }
+    static void dtor() noexcept { ImGui::EndListBox(); }
 };
 
 struct MenuBar : public ScopeWrapper<MenuBar>
 {
-	MenuBar() noexcept : ScopeWrapper(ImGui::BeginMenuBar()) {}
-	static void dtor() noexcept { ImGui::EndMenuBar(); }
+    MenuBar() noexcept : ScopeWrapper(ImGui::BeginMenuBar()) {}
+    static void dtor() noexcept { ImGui::EndMenuBar(); }
 };
 
 struct MainMenuBar : public ScopeWrapper<MainMenuBar>
 {
-	MainMenuBar() noexcept : ScopeWrapper(ImGui::BeginMainMenuBar()) {}
-	static void dtor() noexcept { ImGui::EndMainMenuBar(); }
+    MainMenuBar() noexcept : ScopeWrapper(ImGui::BeginMainMenuBar()) {}
+    static void dtor() noexcept { ImGui::EndMainMenuBar(); }
 };
 
 struct Menu : public ScopeWrapper<Menu>
 {
-	Menu(const char* label, bool enabled=true) noexcept : ScopeWrapper(ImGui::BeginMenu(label, enabled)) {}
-	static void dtor() noexcept { ImGui::EndMenu(); }
+    Menu(const char* label, bool enabled = true) noexcept : ScopeWrapper(ImGui::BeginMenu(label, enabled)) {}
+    static void dtor() noexcept { ImGui::EndMenu(); }
 };
 
 struct Table : public ScopeWrapper<Table>
 {
     template<typename... Args>
-    Table(Args&&... args) noexcept : ScopeWrapper(ImGui::BeginTable(std::forward<Args>(args)...)) {}
+    Table(const char* str_id, int column, ImGuiTableFlags flags = 0, const ImVec2& outer_size = ImVec2(0.0f, 0.0f),
+          float inner_width = 0.0f) noexcept
+        : ScopeWrapper(ImGui::BeginTable(str_id, column, flags, outer_size, inner_width))
+    {
+    }
     static void dtor() noexcept { ImGui::EndTable(); }
 };
 
 struct Tooltip : public ScopeWrapper<Tooltip>
 {
-	Tooltip() noexcept : ScopeWrapper(true) { ImGui::BeginTooltip(); }
-	static void dtor() noexcept { ImGui::EndTooltip(); }
+    Tooltip() noexcept : ScopeWrapper(true) { ImGui::BeginTooltip(); }
+    static void dtor() noexcept { ImGui::EndTooltip(); }
 };
 
 struct CollapsingHeader : public ScopeWrapper<CollapsingHeader>
 {
-    CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags) noexcept : ScopeWrapper(ImGui::CollapsingHeader(label, flags)) {}
+    CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags) noexcept
+        : ScopeWrapper(ImGui::CollapsingHeader(label, flags))
+    {
+    }
     inline static void dtor() noexcept {}
 };
 
@@ -164,43 +192,60 @@ struct SeparatedTreeNode : public ScopeWrapper<SeparatedTreeNode>
 
 struct Popup : public ScopeWrapper<Popup>
 {
-	struct modal {};
+    struct modal
+    {
+    };
 
-	Popup(const char* str_id, ImGuiWindowFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginPopup(str_id, flags)) {}
+    Popup(const char* str_id, ImGuiWindowFlags flags = 0) noexcept : ScopeWrapper(ImGui::BeginPopup(str_id, flags)) {}
 
-	// There are 3 ways to construct a modal popup:
-	// - Use the PopupModal class,
-	// - Use Popup(modal{}, ...)
-	// - Use the static method Popup::Modal(...)
-	Popup(modal, const char* name, bool* p_open=NULL, ImGuiWindowFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginPopupModal(name, p_open, flags)) {}
-	static Popup Modal(const char* name, bool* p_open=NULL, ImGuiWindowFlags flags=0) noexcept { return Popup(modal{}, name, p_open, flags); }
+    // There are 3 ways to construct a modal popup:
+    // - Use the PopupModal class,
+    // - Use Popup(modal{}, ...)
+    // - Use the static method Popup::Modal(...)
+    Popup(modal, const char* name, bool* p_open = NULL, ImGuiWindowFlags flags = 0) noexcept
+        : ScopeWrapper(ImGui::BeginPopupModal(name, p_open, flags))
+    {
+    }
+    static Popup Modal(const char* name, bool* p_open = NULL, ImGuiWindowFlags flags = 0) noexcept
+    {
+        return Popup(modal{}, name, p_open, flags);
+    }
 
-	static void dtor() noexcept { ImGui::EndPopup(); }
+    static void dtor() noexcept { ImGui::EndPopup(); }
 };
 
 struct PopupModal : public ScopeWrapper<PopupModal>
 {
-	PopupModal(const char* name, bool* p_open=NULL, ImGuiWindowFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginPopupModal(name, p_open, flags)) {}
-	static void dtor() noexcept { ImGui::EndPopup(); }
+    PopupModal(const char* name, bool* p_open = NULL, ImGuiWindowFlags flags = 0) noexcept
+        : ScopeWrapper(ImGui::BeginPopupModal(name, p_open, flags))
+    {
+    }
+    static void dtor() noexcept { ImGui::EndPopup(); }
 };
 
 struct TabBar : public ScopeWrapper<TabBar>
 {
-    TabBar(const char* name, ImGuiTabBarFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginTabBar(name, flags)) {}
+    TabBar(const char* name, ImGuiTabBarFlags flags = 0) noexcept : ScopeWrapper(ImGui::BeginTabBar(name, flags)) {}
     static void dtor() noexcept { ImGui::EndTabBar(); }
 };
 
 struct TabItem : public ScopeWrapper<TabItem>
 {
-    TabItem(const char* name, bool* open=nullptr, ImGuiTabItemFlags flags=0) noexcept : ScopeWrapper(ImGui::BeginTabItem(name, open, flags)) {}
+    TabItem(const char* name, bool* open = nullptr, ImGuiTabItemFlags flags = 0) noexcept
+        : ScopeWrapper(ImGui::BeginTabItem(name, open, flags))
+    {
+    }
     static void dtor() noexcept { ImGui::EndTabItem(); }
 };
 
 struct WithStyleVar : public ScopeWrapper<WithStyleVar>
 {
-	template<class... Args>
-		WithStyleVar(Args&&... args) noexcept : ScopeWrapper(true) { ImGui::PushStyleVar(std::forward<Args>(args)...); }
-	static void dtor() noexcept { ImGui::PopStyleVar(); }
+    template<class... Args>
+    WithStyleVar(Args&&... args) noexcept : ScopeWrapper(true)
+    {
+        ImGui::PushStyleVar(std::forward<Args>(args)...);
+    }
+    static void dtor() noexcept { ImGui::PopStyleVar(); }
 };
 
 struct ItemTooltip : public ScopeWrapper<ItemTooltip>
@@ -213,4 +258,4 @@ struct ItemTooltip : public ScopeWrapper<ItemTooltip>
     static void dtor() noexcept { ImGui::EndTooltip(); }
 };
 
-}
+}  // namespace dear
