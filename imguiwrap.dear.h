@@ -5,11 +5,11 @@
 #include "imgui.h"
 
 #ifndef DEAR_NO_STRINGVIEW
-#include <string_view>
+#    include <string_view>
 #endif
 
 #ifndef DEAR_NO_STRING
-#include <string>
+#    include <string>
 #endif
 
 namespace dear
@@ -89,12 +89,11 @@ struct Begin : public ScopeWrapper<Begin, true>
 // Wrapper for ImGui::BeginChild ... EndChild, which will always call EndChild.
 struct Child : public ScopeWrapper<Child, true>
 {
-    Child(const char* title, const ImVec2& size = ImVec2(0, 0), bool border = false,
-          ImGuiWindowFlags flags = 0) noexcept
+    Child(const char* title, const ImVec2& size = Zero, bool border = false, ImGuiWindowFlags flags = 0) noexcept
         : ScopeWrapper(ImGui::BeginChild(title, size, border, flags))
     {
     }
-    Child(ImGuiID id, const ImVec2& size = ImVec2(0, 0), bool border = false, ImGuiWindowFlags flags = 0) noexcept
+    Child(ImGuiID id, const ImVec2& size = Zero, bool border = false, ImGuiWindowFlags flags = 0) noexcept
         : ScopeWrapper(ImGui::BeginChild(id, size, border, flags))
     {
     }
@@ -131,10 +130,7 @@ struct Combo : public ScopeWrapper<Combo>
 // Wrapper for ImGui::Begin...EndListBox.
 struct ListBox : public ScopeWrapper<ListBox>
 {
-    ListBox(const char* label, const ImVec2& size = ImVec2(0, 0)) noexcept
-        : ScopeWrapper(ImGui::BeginListBox(label, size))
-    {
-    }
+    ListBox(const char* label, const ImVec2& size = Zero) noexcept : ScopeWrapper(ImGui::BeginListBox(label, size)) {}
     static void dtor() noexcept { ImGui::EndListBox(); }
 };
 
@@ -164,7 +160,7 @@ struct Menu : public ScopeWrapper<Menu>
 struct Table : public ScopeWrapper<Table>
 {
     template<typename... Args>
-    Table(const char* str_id, int column, ImGuiTableFlags flags = 0, const ImVec2& outer_size = ImVec2(0.0f, 0.0f),
+    Table(const char* str_id, int column, ImGuiTableFlags flags = 0, const ImVec2& outer_size = Zero,
           float inner_width = 0.0f) noexcept
         : ScopeWrapper(ImGui::BeginTable(str_id, column, flags, outer_size, inner_width))
     {
@@ -182,7 +178,7 @@ struct Tooltip : public ScopeWrapper<Tooltip>
 // Wrapper around ImGui::CollapsingHeader to allow consistent code styling.
 struct CollapsingHeader : public ScopeWrapper<CollapsingHeader>
 {
-    CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags=0) noexcept
+    CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags = 0) noexcept
         : ScopeWrapper(ImGui::CollapsingHeader(label, flags))
     {
     }
@@ -222,7 +218,6 @@ struct Popup : public ScopeWrapper<Popup>
     // Non-modal Popup.
     Popup(const char* str_id, ImGuiWindowFlags flags = 0) noexcept : ScopeWrapper(ImGui::BeginPopup(str_id, flags)) {}
 
-
     // Modal popups.
 
     // imguiwrap provides 3 ways to construct a modal popup:
@@ -230,7 +225,9 @@ struct Popup : public ScopeWrapper<Popup>
     // - Use Popup(modal{}, ...)
     // - Use the static method Popup::Modal(...)
 
-    struct modal {};
+    struct modal
+    {
+    };
     Popup(modal, const char* name, bool* p_open = NULL, ImGuiWindowFlags flags = 0) noexcept
         : ScopeWrapper(ImGui::BeginPopupModal(name, p_open, flags))
     {
@@ -272,21 +269,15 @@ struct TabItem : public ScopeWrapper<TabItem>
 };
 
 // Wrapper around pushing a style var onto ImGui's stack and popping it back off.
-///TODO: Support nesting so we can do a single pop operation.
+/// TODO: Support nesting so we can do a single pop operation.
 struct WithStyleVar : public ScopeWrapper<WithStyleVar>
 {
-    WithStyleVar(ImGuiStyleVar idx, const ImVec2& val) noexcept : ScopeWrapper(true)
-    {
-        ImGui::PushStyleVar(idx, val);
-    }
-    WithStyleVar(ImGuiStyleVar idx, float val=0.0f) noexcept : ScopeWrapper(true)
-    {
-        ImGui::PushStyleVar(idx, val);
-    }
+    WithStyleVar(ImGuiStyleVar idx, const ImVec2& val) noexcept : ScopeWrapper(true) { ImGui::PushStyleVar(idx, val); }
+    WithStyleVar(ImGuiStyleVar idx, float val = 0.0f) noexcept : ScopeWrapper(true) { ImGui::PushStyleVar(idx, val); }
     static void dtor() noexcept { ImGui::PopStyleVar(); }
 };
 
-///TODO: WithStyleColor
+/// TODO: WithStyleColor
 
 // Wrapper for BeginTooltip predicated on the previous item being hovered.
 struct ItemTooltip : public ScopeWrapper<ItemTooltip>
@@ -305,9 +296,10 @@ struct ItemTooltip : public ScopeWrapper<ItemTooltip>
 // of va_args and a vsnprintf call, by forwarding the print expression straight
 // to snprintf.
 template<class... Args>
-void Text(const char* fmt, Args&&... args) noexcept IM_FMTARGS(1)
+void
+Text(const char* fmt, Args&&... args) noexcept IM_FMTARGS(1)
 {
-    const auto formatter = [&] (char* into, size_t size) {
+    const auto formatter = [&](char* into, size_t size) {
         return into + snprintf(into, size, fmt, std::forward<Args>(args)...);
     };
     extern void _text_impl(std::function<const char*(char*, size_t)>) noexcept;
@@ -316,11 +308,13 @@ void Text(const char* fmt, Args&&... args) noexcept IM_FMTARGS(1)
 
 // std::string_view helpers.
 #ifndef DEAR_NO_STRINGVIEW
-static inline void Text(std::string_view str) noexcept
+static inline void
+Text(std::string_view str) noexcept
 {
     ImGui::TextUnformatted(str.data(), str.data() + str.size());
 }
-static inline void TextUnformatted(std::string_view str) noexcept
+static inline void
+TextUnformatted(std::string_view str) noexcept
 {
     ImGui::TextUnformatted(str.data(), str.data() + str.size());
 }
@@ -328,13 +322,28 @@ static inline void TextUnformatted(std::string_view str) noexcept
 
 // std::string helpers.
 #ifndef DEAR_NO_STRING
-static inline void Text(const std::string& str) noexcept
+static inline void
+Text(const std::string& str) noexcept
 {
     ImGui::TextUnformatted(str.c_str(), str.c_str() + str.length());
 }
-inline void TextUnformatted(const std::string& str) noexcept
+inline void
+TextUnformatted(const std::string& str) noexcept
 {
     ImGui::TextUnformatted(str.c_str(), str.c_str() + str.length());
+}
+#endif
+
+#ifndef DEAR_NO_STRING
+static inline bool
+MenuItem(const std::string& str, const char* shortcut = nullptr, bool selected = false, bool enabled = true) noexcept
+{
+    return ImGui::MenuItem(str.c_str(), shortcut, selected, enabled);
+}
+static inline bool
+MenuItem(const std::string& str, const char* shortcut, bool* selected, bool enabled = true) noexcept
+{
+    return ImGui::MenuItem(str.c_str(), shortcut, selected, enabled);
 }
 #endif
 
