@@ -75,6 +75,7 @@ protected:
     ScopeWrapper& operator=(const ScopeWrapper&) = delete;
 };
 
+// Wrapper for ImGui::Begin ... End, which will always call End.
 struct Begin : public ScopeWrapper<Begin, true>
 {
     // Invoke Begin and guarantee that 'End' will be called.
@@ -85,6 +86,7 @@ struct Begin : public ScopeWrapper<Begin, true>
     static void dtor() noexcept { ImGui::End(); }
 };
 
+// Wrapper for ImGui::BeginChild ... EndChild, which will always call EndChild.
 struct Child : public ScopeWrapper<Child, true>
 {
     Child(const char* title, const ImVec2& size = ImVec2(0, 0), bool border = false,
@@ -99,6 +101,7 @@ struct Child : public ScopeWrapper<Child, true>
     static void dtor() noexcept { ImGui::EndChild(); }
 };
 
+// Wrapper for ImGui::BeginChildFrame ... EndChildFrame, which will always call EndChildFrame.
 struct ChildFrame : public ScopeWrapper<ChildFrame, true>
 {
     template<typename... Args>
@@ -108,12 +111,14 @@ struct ChildFrame : public ScopeWrapper<ChildFrame, true>
     static void dtor() noexcept { ImGui::EndChildFrame(); }
 };
 
-struct Group : public ScopeWrapper<Group>
+// Wrapper for ImGui::BeginGroup ... EndGroup which will always call EndGroup.
+struct Group : public ScopeWrapper<Group, true>
 {
     Group() noexcept : ScopeWrapper(true) { ImGui::BeginGroup(); }
     static void dtor() noexcept { ImGui::EndGroup(); }
 };
 
+// Wrapper for ImGui::Begin...EndCombo.
 struct Combo : public ScopeWrapper<Combo>
 {
     Combo(const char* label, const char* preview, ImGuiComboFlags flags = 0) noexcept
@@ -123,6 +128,7 @@ struct Combo : public ScopeWrapper<Combo>
     static void dtor() noexcept { ImGui::EndCombo(); }
 };
 
+// Wrapper for ImGui::Begin...EndListBox.
 struct ListBox : public ScopeWrapper<ListBox>
 {
     ListBox(const char* label, const ImVec2& size = ImVec2(0, 0)) noexcept
@@ -132,24 +138,29 @@ struct ListBox : public ScopeWrapper<ListBox>
     static void dtor() noexcept { ImGui::EndListBox(); }
 };
 
+// Wrapper for ImGui::Begin...EndMenuBar.
 struct MenuBar : public ScopeWrapper<MenuBar>
 {
     MenuBar() noexcept : ScopeWrapper(ImGui::BeginMenuBar()) {}
     static void dtor() noexcept { ImGui::EndMenuBar(); }
 };
 
+// Wrapper for ImGui::Begin...EndMainMenuBar.
 struct MainMenuBar : public ScopeWrapper<MainMenuBar>
 {
     MainMenuBar() noexcept : ScopeWrapper(ImGui::BeginMainMenuBar()) {}
     static void dtor() noexcept { ImGui::EndMainMenuBar(); }
 };
 
+// Wrapper for ImGui::BeginMenu...ImGui::EndMenu.
 struct Menu : public ScopeWrapper<Menu>
 {
     Menu(const char* label, bool enabled = true) noexcept : ScopeWrapper(ImGui::BeginMenu(label, enabled)) {}
     static void dtor() noexcept { ImGui::EndMenu(); }
 };
 
+// Wrapper for ImGui::BeginTable...ImGui::EndTable.
+// See also EditTableFlags.
 struct Table : public ScopeWrapper<Table>
 {
     template<typename... Args>
@@ -161,12 +172,14 @@ struct Table : public ScopeWrapper<Table>
     static void dtor() noexcept { ImGui::EndTable(); }
 };
 
+// Wrapper for ImGui::Begin...EndToolTip.
 struct Tooltip : public ScopeWrapper<Tooltip>
 {
     Tooltip() noexcept : ScopeWrapper(true) { ImGui::BeginTooltip(); }
     static void dtor() noexcept { ImGui::EndTooltip(); }
 };
 
+// Wrapper around ImGui::CollapsingHeader to allow consistent code styling.
 struct CollapsingHeader : public ScopeWrapper<CollapsingHeader>
 {
     CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags=0) noexcept
@@ -176,6 +189,8 @@ struct CollapsingHeader : public ScopeWrapper<CollapsingHeader>
     inline static void dtor() noexcept {}
 };
 
+// Wrapper for ImGui::TreeNode...ImGui::TreePop.
+// See also SeparatedTreeNode.
 struct TreeNode : public ScopeWrapper<TreeNode>
 {
     template<typename... Args>
@@ -185,6 +200,7 @@ struct TreeNode : public ScopeWrapper<TreeNode>
     static void dtor() noexcept { ImGui::TreePop(); }
 };
 
+// Wrapper around a TreeNode followed by a Separator (it's a fairly common sequence).
 struct SeparatedTreeNode : public ScopeWrapper<SeparatedTreeNode>
 {
     template<typename... Args>
@@ -198,22 +214,28 @@ struct SeparatedTreeNode : public ScopeWrapper<SeparatedTreeNode>
     }
 };
 
+// Popup provides the stock wrapper around ImGui::BeginPopup...ImGui::EndPopup as well as two methods
+// of instantiating a modal, for those who want modality to be a property fo Popup rather than a
+// discrete type.
 struct Popup : public ScopeWrapper<Popup>
 {
-    struct modal
-    {
-    };
-
+    // Non-modal Popup.
     Popup(const char* str_id, ImGuiWindowFlags flags = 0) noexcept : ScopeWrapper(ImGui::BeginPopup(str_id, flags)) {}
 
-    // There are 3 ways to construct a modal popup:
+
+    // Modal popups.
+
+    // imguiwrap provides 3 ways to construct a modal popup:
     // - Use the PopupModal class,
     // - Use Popup(modal{}, ...)
     // - Use the static method Popup::Modal(...)
+
+    struct modal {};
     Popup(modal, const char* name, bool* p_open = NULL, ImGuiWindowFlags flags = 0) noexcept
         : ScopeWrapper(ImGui::BeginPopupModal(name, p_open, flags))
     {
     }
+
     static Popup Modal(const char* name, bool* p_open = NULL, ImGuiWindowFlags flags = 0) noexcept
     {
         return Popup(modal{}, name, p_open, flags);
@@ -222,6 +244,7 @@ struct Popup : public ScopeWrapper<Popup>
     static void dtor() noexcept { ImGui::EndPopup(); }
 };
 
+// Wrapper around ImGui's BeginPopupModal ... EndPopup sequence.
 struct PopupModal : public ScopeWrapper<PopupModal>
 {
     PopupModal(const char* name, bool* p_open = NULL, ImGuiWindowFlags flags = 0) noexcept
@@ -231,12 +254,14 @@ struct PopupModal : public ScopeWrapper<PopupModal>
     static void dtor() noexcept { ImGui::EndPopup(); }
 };
 
+// Wrapper for ImGui::BeginTabBar ... EndTabBar
 struct TabBar : public ScopeWrapper<TabBar>
 {
     TabBar(const char* name, ImGuiTabBarFlags flags = 0) noexcept : ScopeWrapper(ImGui::BeginTabBar(name, flags)) {}
     static void dtor() noexcept { ImGui::EndTabBar(); }
 };
 
+// Wrapper for ImGui::BeginTabItem ... EndTabItem
 struct TabItem : public ScopeWrapper<TabItem>
 {
     TabItem(const char* name, bool* open = nullptr, ImGuiTabItemFlags flags = 0) noexcept
@@ -246,6 +271,8 @@ struct TabItem : public ScopeWrapper<TabItem>
     static void dtor() noexcept { ImGui::EndTabItem(); }
 };
 
+// Wrapper around pushing a style var onto ImGui's stack and popping it back off.
+///TODO: Support nesting so we can do a single pop operation.
 struct WithStyleVar : public ScopeWrapper<WithStyleVar>
 {
     WithStyleVar(ImGuiStyleVar idx, const ImVec2& val) noexcept : ScopeWrapper(true)
@@ -259,6 +286,9 @@ struct WithStyleVar : public ScopeWrapper<WithStyleVar>
     static void dtor() noexcept { ImGui::PopStyleVar(); }
 };
 
+///TODO: WithStyleColor
+
+// Wrapper for BeginTooltip predicated on the previous item being hovered.
 struct ItemTooltip : public ScopeWrapper<ItemTooltip>
 {
     ItemTooltip(ImGuiHoveredFlags flags = 0) noexcept : ScopeWrapper(ImGui::IsItemHovered(flags))
@@ -269,8 +299,13 @@ struct ItemTooltip : public ScopeWrapper<ItemTooltip>
     static void dtor() noexcept { ImGui::EndTooltip(); }
 };
 
+//// Text helpers
+
+// Alternative implementation of ImGui::Text which avoids the overhead
+// of va_args and a vsnprintf call, by forwarding the print expression straight
+// to snprintf.
 template<class... Args>
-void Text(const char* fmt, Args&&... args) noexcept
+void Text(const char* fmt, Args&&... args) noexcept IM_FMTARGS(1)
 {
     const auto formatter = [&] (char* into, size_t size) {
         return into + snprintf(into, size, fmt, std::forward<Args>(args)...);
@@ -279,6 +314,7 @@ void Text(const char* fmt, Args&&... args) noexcept
     _text_impl(formatter);
 }
 
+// std::string_view helpers.
 #ifndef DEAR_NO_STRINGVIEW
 static inline void Text(std::string_view str) noexcept
 {
@@ -290,6 +326,7 @@ static inline void TextUnformatted(std::string_view str) noexcept
 }
 #endif
 
+// std::string helpers.
 #ifndef DEAR_NO_STRING
 static inline void Text(const std::string& str) noexcept
 {

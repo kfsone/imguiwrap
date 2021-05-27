@@ -1,25 +1,32 @@
 #include <array>
 #include <functional>
 
+#include "imguiwrap.dear.h"
 #include "imguiwrap.h"
 #include "imguiwrap.helpers.h"
-#include "imguiwrap.dear.h"
 
 #include "imgui_internal.h"
 
-static void glfw_error_callback(int error, const char* description) noexcept
+// glfw_error_callback is an internal callback for logging any errors raised
+// by glfw.
+static void
+glfw_error_callback(int error, const char* description) noexcept
 {
     fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-int imgui_main(int, char**, ImGuiWrapperFn mainFn) noexcept
+// imgui_main initializes an ImGui openGL/glfw backend and then runs
+// the passed ImGuiWrapperFn repeatedly until the std::optional it
+// returns has a value, which is then returned as the exit code.
+int
+imgui_main(int, char**, ImGuiWrapperFn mainFn) noexcept
 {
     // Setup window
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
         return 1;
 
-    // Decide GL+GLSL versions
+        // Decide GL+GLSL versions
 #if defined(IMGUI_IMPL_OPENGL_ES2)
     // GL ES 2.0 + GLSL 100
     const char* glsl_version = "#version 100";
@@ -47,7 +54,7 @@ int imgui_main(int, char**, ImGuiWrapperFn mainFn) noexcept
     if (window == NULL)
         return 1;
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // Enable vsync
+    glfwSwapInterval(1);  // Enable vsync
 
     // Initialize OpenGL loader
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
@@ -57,7 +64,8 @@ int imgui_main(int, char**, ImGuiWrapperFn mainFn) noexcept
 #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD)
     bool err = gladLoadGL() == 0;
 #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLAD2)
-    bool err = gladLoadGL(glfwGetProcAddress) == 0; // glad2 recommend using the windowing library loader instead of the (optionally) bundled one.
+    bool err = gladLoadGL(glfwGetProcAddress) ==
+               0;  // glad2 recommend using the windowing library loader instead of the (optionally) bundled one.
 #elif defined(IMGUI_IMPL_OPENGL_LOADER_GLBINDING2)
     bool err = false;
     glbinding::Binding::initialize();
@@ -65,7 +73,8 @@ int imgui_main(int, char**, ImGuiWrapperFn mainFn) noexcept
     bool err = false;
     glbinding::initialize([](const char* name) { return (glbinding::ProcAddress)glfwGetProcAddress(name); });
 #else
-    bool err = false; // If you use IMGUI_IMPL_OPENGL_LOADER_CUSTOM, your loader is likely to requires some form of initialization.
+    bool err = false;  // If you use IMGUI_IMPL_OPENGL_LOADER_CUSTOM, your loader is likely to requires some form of
+                       // initialization.
 #endif
     if (err)
     {
@@ -76,29 +85,32 @@ int imgui_main(int, char**, ImGuiWrapperFn mainFn) noexcept
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+
     ImGui::StyleColorsDark();
-    
+
     // Setup Platform/Renderer backends
-    ///TODO: Needs to be based on cmake config.
+    /// TODO: Needs to be based on cmake config.
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     // Our state
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-	std::optional<int> exitCode {};
+    std::optional<int> exitCode{};
 
     // Main loop
     while (!exitCode.has_value() && !glfwWindowShouldClose(window))
     {
         // Poll and handle events (inputs, window resize, etc.)
-        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your
+        // inputs.
         // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
         // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
-        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those
+        // two flags.
         glfwPollEvents();
 
         // Start the Dear ImGui frame
@@ -106,14 +118,15 @@ int imgui_main(int, char**, ImGuiWrapperFn mainFn) noexcept
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-		exitCode = mainFn();
+        exitCode = mainFn();
 
         // Rendering
         ImGui::Render();
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
-        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w,
+                     clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -131,26 +144,44 @@ int imgui_main(int, char**, ImGuiWrapperFn mainFn) noexcept
     return exitCode.value_or(0);
 }
 
-static void flagsWindow(const char* title, bool* showing, std::function<void(void)> impl) noexcept
+// flagsWindow is a helper for initializing a flag-editing window.
+static void
+flagsWindow(const char* title, bool* showing, std::function<void(void)> impl) noexcept
 {
-	if (showing && !*showing)
-		return;
+    if (showing && !*showing)
+        return;
 
-	constexpr ImGuiWindowFlags editWindowFlags =
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoFocusOnAppearing |
-		ImGuiWindowFlags_AlwaysUseWindowPadding;
+    constexpr ImGuiWindowFlags editWindowFlags =
+        ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_AlwaysUseWindowPadding;
 
-	dear::Begin(title, showing, editWindowFlags) && impl;
+    dear::Begin(title, showing, editWindowFlags) && impl;
 }
 
 namespace dear
 {
 
+// EditTableFlags presents a window with selections for all the flags available
+// for a table, allowing you to dynamically modify the table's appearance/layout.
 void
 EditTableFlags(const char* title, bool* showing, ImGuiTableFlags* flags) noexcept
 {
-	flagsWindow(title, showing, [=] () noexcept {
+    // List of the sizing flag names.
+    static constexpr std::array<const char*, 5> sizes = {"Default", "FixedFit", "FixedSame", "StretchProp", "StretchSame"};
+
+    flagsWindow(title, showing, [=]() noexcept {
+        // Drop-boxes first.
+        // Sizing is actually a discrete integer value, shifted 13 bits into the flag.
+        int sizing = *flags & (ImGuiTableFlags_SizingMask_);
+        dear::Combo("Sizing", sizes[sizing >> ImGuiTableFlags_SizingShift]) && [&] {
+            for (int i = 0; i < sizes.size(); i++)
+            {
+                if (ImGui::Selectable(sizes[i]))
+                    sizing = i;
+            }
+        };
+        *flags = (*flags & ~ImGuiTableFlags_SizingMask_) | sizing;
+
+        // Checkboxes.
         ImGui::CheckboxFlags("Resizable", flags, ImGuiTableFlags_Resizable);
         ImGui::CheckboxFlags("Reorderable", flags, ImGuiTableFlags_Reorderable);
         ImGui::CheckboxFlags("Hideable", flags, ImGuiTableFlags_Hideable);
@@ -164,16 +195,6 @@ EditTableFlags(const char* title, bool* showing, ImGuiTableFlags* flags) noexcep
         ImGui::CheckboxFlags("BordersOuterV", flags, ImGuiTableFlags_BordersOuterV);
         ImGui::CheckboxFlags("NoBordersInBody", flags, ImGuiTableFlags_NoBordersInBody);
         ImGui::CheckboxFlags("NoBordersInBodyUntilResize", flags, ImGuiTableFlags_NoBordersInBodyUntilResize);
-        int sizing = (*flags & (7 << 13)) >> 13;
-        std::array<const char*, 5> sizes = { "Default", "FixedFit", "FixedSame", "StretchProp", "StretchSame" };
-        dear::Combo("Sizing", sizes[sizing]) && [&] {
-            for (int i = 0; i < sizes.size(); i++) {
-                if (ImGui::Selectable(sizes[i]))
-                    sizing = i;
-            }
-        };
-        *flags &= ~(7 << 13);
-        *flags |= sizing << 13;
         ImGui::CheckboxFlags("NoHostExtendX", flags, ImGuiTableFlags_NoHostExtendX);
         ImGui::CheckboxFlags("NoHostExtendY", flags, ImGuiTableFlags_NoHostExtendY);
         ImGui::CheckboxFlags("NoKeepColumnsVisible", flags, ImGuiTableFlags_NoKeepColumnsVisible);
@@ -183,13 +204,15 @@ EditTableFlags(const char* title, bool* showing, ImGuiTableFlags* flags) noexcep
         ImGui::CheckboxFlags("NoPadInnerX", flags, ImGuiTableFlags_NoPadInnerX);
         ImGui::CheckboxFlags("ScrollX", flags, ImGuiTableFlags_ScrollX);
         ImGui::CheckboxFlags("ScrollY", flags, ImGuiTableFlags_ScrollY);
-	});
+    });
 }
 
+// EditWindowFlags presents a window with selections for all the flags available
+// for a window, allowing you to dynamically modify the window's appearance/layout.
 void
 EditWindowFlags(const char* title, bool* showing, ImGuiWindowFlags* flags) noexcept
 {
-    flagsWindow(title, showing, [=] () noexcept {
+    flagsWindow(title, showing, [=]() noexcept {
         ImGui::CheckboxFlags("NoTitleBar", flags, ImGuiWindowFlags_NoTitleBar);
         ImGui::CheckboxFlags("NoResize", flags, ImGuiWindowFlags_NoResize);
         ImGui::CheckboxFlags("NoMove", flags, ImGuiWindowFlags_NoMove);
@@ -213,14 +236,17 @@ EditWindowFlags(const char* title, bool* showing, ImGuiWindowFlags* flags) noexc
     });
 }
 
-void _text_impl(std::function<const char*(char*, size_t)> formatter) noexcept
+// _text_impl is a helper for writing Text trampolines for non-c-strings.
+void
+_text_impl(std::function<const char*(char*, size_t)> formatter) noexcept
 {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems)
         return;
 
     ImGuiContext& g = *GImGui;
-    ImGui::TextEx(g.TempBuffer, formatter(g.TempBuffer, IM_ARRAYSIZE(g.TempBuffer)), ImGuiTextFlags_NoWidthForLargeClippedText);
+    ImGui::TextEx(g.TempBuffer, formatter(g.TempBuffer, IM_ARRAYSIZE(g.TempBuffer)),
+                  ImGuiTextFlags_NoWidthForLargeClippedText);
 }
 
-}
+}  // namespace dear
