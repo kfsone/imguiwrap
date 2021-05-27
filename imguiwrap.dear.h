@@ -4,6 +4,14 @@
 
 #include "imgui.h"
 
+#ifndef DEAR_NO_STRINGVIEW
+#include <string_view>
+#endif
+
+#ifndef DEAR_NO_STRING
+#include <string>
+#endif
+
 namespace dear
 {
 static const ImVec2 Zero(0.0f, 0.0f);
@@ -161,7 +169,7 @@ struct Tooltip : public ScopeWrapper<Tooltip>
 
 struct CollapsingHeader : public ScopeWrapper<CollapsingHeader>
 {
-    CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags) noexcept
+    CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags=0) noexcept
         : ScopeWrapper(ImGui::CollapsingHeader(label, flags))
     {
     }
@@ -240,10 +248,13 @@ struct TabItem : public ScopeWrapper<TabItem>
 
 struct WithStyleVar : public ScopeWrapper<WithStyleVar>
 {
-    template<class... Args>
-    WithStyleVar(Args&&... args) noexcept : ScopeWrapper(true)
+    WithStyleVar(ImGuiStyleVar idx, const ImVec2& val) noexcept : ScopeWrapper(true)
     {
-        ImGui::PushStyleVar(std::forward<Args>(args)...);
+        ImGui::PushStyleVar(idx, val);
+    }
+    WithStyleVar(ImGuiStyleVar idx, float val=0.0f) noexcept : ScopeWrapper(true)
+    {
+        ImGui::PushStyleVar(idx, val);
     }
     static void dtor() noexcept { ImGui::PopStyleVar(); }
 };
@@ -257,5 +268,37 @@ struct ItemTooltip : public ScopeWrapper<ItemTooltip>
     }
     static void dtor() noexcept { ImGui::EndTooltip(); }
 };
+
+template<class... Args>
+void Text(const char* fmt, Args&&... args) noexcept
+{
+    const auto formatter = [&] (char* into, size_t size) {
+        return into + snprintf(into, size, fmt, std::forward<Args>(args)...);
+    };
+    extern void _text_impl(std::function<const char*(char*, size_t)>) noexcept;
+    _text_impl(formatter);
+}
+
+#ifndef DEAR_NO_STRINGVIEW
+static inline void Text(std::string_view str) noexcept
+{
+    ImGui::TextUnformatted(str.data(), str.data() + str.size());
+}
+static inline void TextUnformatted(std::string_view str) noexcept
+{
+    ImGui::TextUnformatted(str.data(), str.data() + str.size());
+}
+#endif
+
+#ifndef DEAR_NO_STRING
+static inline void Text(const std::string& str) noexcept
+{
+    ImGui::TextUnformatted(str.c_str(), str.c_str() + str.length());
+}
+inline void TextUnformatted(const std::string& str) noexcept
+{
+    ImGui::TextUnformatted(str.c_str(), str.c_str() + str.length());
+}
+#endif
 
 }  // namespace dear

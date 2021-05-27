@@ -1,8 +1,11 @@
 #include <array>
+#include <functional>
 
 #include "imguiwrap.h"
 #include "imguiwrap.helpers.h"
 #include "imguiwrap.dear.h"
+
+#include "imgui_internal.h"
 
 static void glfw_error_callback(int error, const char* description) noexcept
 {
@@ -210,5 +213,14 @@ EditWindowFlags(const char* title, bool* showing, ImGuiWindowFlags* flags) noexc
     });
 }
 
+void _text_impl(std::function<const char*(char*, size_t)> formatter) noexcept
+{
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems)
+        return;
+
+    ImGuiContext& g = *GImGui;
+    ImGui::TextEx(g.TempBuffer, formatter(g.TempBuffer, IM_ARRAYSIZE(g.TempBuffer)), ImGuiTextFlags_NoWidthForLargeClippedText);
 }
 
+}
