@@ -61,7 +61,7 @@ public:
     // operator&& will excute 'code' if the predicate supplied during
     // construction was true.
     template<typename PassthruFn>
-    constexpr bool operator&&(PassthruFn passthru) const
+    constexpr bool operator&&(PassthruFn passthru) const noexcept
     {
         if (ok_)
             passthru();
