@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_CXX_STANDARD "20")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -39,7 +39,7 @@ if (WIN32)
 	set (IMGW_NO_RTTI "/GR-")
 else ()
 	set (IMGW_NO_EXCEPTIONS "-fno-exceptions")
-	set (IMGW_ALL_WARNINGS  "-w3")
+	set (IMGW_ALL_WARNINGS  "-wall -werror")
 	set (IMGW_NO_RTTI "-fno-rtti")
 endif ()
 
