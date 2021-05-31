@@ -39,7 +39,7 @@ if (WIN32)
 	set (IMGW_NO_RTTI "/GR-")
 else ()
 	set (IMGW_NO_EXCEPTIONS "-fno-exceptions")
-	set (IMGW_ALL_WARNINGS  "-wall -werror")
+	set (IMGW_ALL_WARNINGS  "-Wall -Werror")
 	set (IMGW_NO_RTTI "-fno-rtti")
 endif ()
 
