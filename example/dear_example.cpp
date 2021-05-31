@@ -48,23 +48,23 @@ ImGuiWrapperReturnType
 windowFn()
 {
     static bool show_visualizer { true };
-	static bool selected { false };
+    static bool selected { false };
 
     // Returning a value will translate to an exit code.
     if (!show_visualizer)
         return 0;
 
-	static bool is_quitting;
+    static bool is_quitting;
     dear::Begin("Visualizer", &show_visualizer) && [] {
-		dear::MainMenuBar() && [] {
-			dear::Menu("File") && [] {
-				ImGui::MenuItem("Wibble", NULL, &selected);
-				ImGui::MenuItem("BOOM");
-			};
-			dear::Menu("Quitters") && [] {
-				is_quitting = ImGui::MenuItem("QUIT NAOW");
-			};
-		};
+        dear::MainMenuBar() && [] {
+            dear::Menu("File") && [] {
+                ImGui::MenuItem("Wibble", NULL, &selected);
+                ImGui::MenuItem("BOOM");
+            };
+            dear::Menu("Quitters") && [] {
+                is_quitting = ImGui::MenuItem("QUIT NAOW");
+            };
+        };
         ImGui::Text("hello");
         dear::TabBar("##TabBar") && [] {
             dear::TabItem("Files") && [] {
@@ -79,22 +79,22 @@ windowFn()
             dear::TabItem("Prototypes") && [] {
                 ImGui::Text("...prototypes...");
             };
-			dear::TabItem("More") && [] {
-				dear::Child("hello") && [] {
-					dear::Group() && [] {
-						dear::Combo("me", "you") && [] {
-							dear::Tooltip() && [] {
-								ImGui::SetTooltip("You are now viewing a tooltip...");
-							};
-						};
-						dear::ListBox("list of things");
-					};
-				};
-			};
+            dear::TabItem("More") && [] {
+                dear::Child("hello") && [] {
+                    dear::Group() && [] {
+                        dear::Combo("me", "you") && [] {
+                            dear::Tooltip() && [] {
+                                ImGui::SetTooltip("You are now viewing a tooltip...");
+                            };
+                        };
+                        dear::ListBox("list of things");
+                    };
+                };
+            };
         };
     };
-	if (is_quitting)
-		return 0;
+    if (is_quitting)
+        return 0;
 
     // Returns "no value" (see std::optional)
     return {};

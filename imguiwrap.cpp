@@ -173,7 +173,7 @@ EditTableFlags(const char* title, bool* showing, ImGuiTableFlags* flags) noexcep
         // Sizing is actually a discrete integer value, shifted 13 bits into the flag.
         int sizing = *flags & (ImGuiTableFlags_SizingMask_);
         dear::Combo("Sizing", sizes[sizing >> ImGuiTableFlags_SizingShift]) && [&] {
-            for (int i = 0; i < sizes.size(); i++)
+            for (size_t i = 0; i < sizes.size(); i++)
             {
                 if (ImGui::Selectable(sizes[i]))
                     sizing = i;

@@ -48,7 +48,7 @@ public:
     constexpr ScopeWrapper(bool ok) noexcept : ok_{ok} {}
 
     // destructor always invokes the supplied destructor function.
-    constexpr ~ScopeWrapper() noexcept
+    ~ScopeWrapper() noexcept
     {
         if constexpr (!force_dtor)
         {
@@ -297,7 +297,7 @@ struct ItemTooltip : public ScopeWrapper<ItemTooltip>
 // to snprintf.
 template<class... Args>
 void
-Text(const char* fmt, Args&&... args) noexcept IM_FMTARGS(1)
+Text(const char* fmt, Args&&... args) noexcept
 {
     const auto formatter = [&](char* into, size_t size) {
         return into + snprintf(into, size, fmt, std::forward<Args>(args)...);
