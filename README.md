@@ -6,7 +6,12 @@ This is a trifold wrapper for the [Dear ImGui](https://github.com/ocornut/imgui)
 2. Provide an RAII mechanism for ImGui scopes,
 3. Provide some minor ImGui helpers,
 
-![Master Branch](https://github.com/kfsone/imguiwrap/actions/workflows/cmake.yml/badge.svg)
+The RAII mechanisms are written to provide a zero-cost abstraction so that using them
+will produce the same machine code (or better) as hand-writing your Begin/End calls.
+
+[godbolt example](https://gcc.godbolt.org/z/saeejdaj4)
+
+![main branch win/lin/mac build](https://github.com/kfsone/imguiwrap/actions/workflows/cmake.yml/badge.svg)
 
 ## Integration with your CMakeLists-based project:
 
@@ -156,28 +161,55 @@ If crazy RAII operator&& is too much for you, `imguiwrap.helpers.h` provides a s
 
 # Questions
 
-## Why "&&"
+## Why "&&"?
 
 To emphasize that the callable will only be invoked *if* the element is
 being rendered.
 
-## Under the hood
+## How do the RAII types work?
 
-What's happening here? Lets translate this into a longer form:
+Each type is a *concrete instantiation* of a 
+[CRTP template](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
+(so they shouldn't blow up your compilation time). This template, `ScopeWrapper`,
+hosts a boolean used to determine if End() needs calling, which can be overwridden
+with a template parameter.
+
+These are leveraged in such a way that the compilers can easily recognize that the
+bool is unused and eliminate it.
+
+In the following piece of code:
 
 ```cpp
-    auto drawAboutTab = [] () {
-        ImGui::Text("This is the about tab");
-    };
-    {
-        dear::TabItem temporary_object("About");
-        temporary_object.operator&&(drawAboutTab);
-    }
+	dear::MenuBar("File") && []() {
+	};
 ```
 
-The dear::&& syntax results in a temporary object whose lifetime lasts until the
-end of the call to operator&&; if the item is being rendered, then the call to
-operator&& will include the execution of the callable.
+we are (1) constructing a temporary and passing a (3) lambda to an operator method on it
+(2) before the object destructs (4).
+
+```cpp
+	dear::MenuBar("File")
+	^^^^^^^^^-1-^^^^^^^^^
+						  && 
+					     ^-2-^
+						       [](){ }
+							   ^^-3-^^
+							           ;
+									 ^-4-^
+```
+
+To expand this out:
+
+```cpp
+	{
+		dear::MenuBar temp("File");    // temp.ok_ = ImGui::BeginMenuBar("File");
+
+		auto noop_lambda = [] () {};
+
+		temp.operator&&(noop_lambda);  // if (temp.ok_) noop_lambda();
+
+	} // invokes temp.~MenuBar();      -> if (temp.ok_) { ImGui::EndMenuBar(); }
+```
 
 
 # Docker build
@@ -190,10 +222,3 @@ build.
 	> docker build --tag kfsone/imguibuild
 	> docker run --rm -it -v ${pwd}:/src kfsone/imguibuild
 	> docker-build/example/dear_example
-
-# Win, Lin, Mac
-
-Initial development is being done under Windows 10 (and WSL for the Linux side, since
-Microsoft added an X server to the Windows Subsystem for Linux).
-
-However, Linux and Mac builds are actually equally as important to me in the long term.
