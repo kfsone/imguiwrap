@@ -11,3 +11,4 @@ out
 Debug
 Release
 RelWithDebInfo
+imgui.ini
