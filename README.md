@@ -6,6 +6,8 @@ This is a trifold wrapper for the [Dear ImGui](https://github.com/ocornut/imgui)
 2- Provide an RAII mechanism for ImGui scopes,
 3- Provide some minor ImGui helpers,
 
+![Master Branch](https://github.com/kfsone/imguiwrap/actions/workflows/cmake.yml/badge.svg)
+
 ## Integration with your CMakeLists-based project:
 
 The imgui library is exposed as a target: imguiwrap. You can then either manually vendor
