@@ -176,3 +176,22 @@ What's happening here? Lets translate this into a longer form:
 The dear::&& syntax results in a temporary object whose lifetime lasts until the
 end of the call to operator&&; if the item is being rendered, then the call to
 operator&& will include the execution of the callable.
+
+
+# Docker build
+
+There is a `Dockerfile` and `docker-build.sh` provided which I use to text the Linux
+build.
+
+	> docker pull kfsone/imguibuild
+	or
+	> docker build --tag kfsone/imguibuild
+	> docker run --rm -it -v ${pwd}:/src kfsone/imguibuild
+	> docker-build/example/dear_example
+
+# Win, Lin, Mac
+
+Initial development is being done under Windows 10 (and WSL for the Linux side, since
+Microsoft added an X server to the Windows Subsystem for Linux).
+
+However, Linux and Mac builds are actually equally as important to me in the long term.
