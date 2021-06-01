@@ -2,9 +2,9 @@
 
 This is a trifold wrapper for the [Dear ImGui](https://github.com/ocornut/imgui) library.
 
-1- Ease integration with CMake,
-2- Provide an RAII mechanism for ImGui scopes,
-3- Provide some minor ImGui helpers,
+1. Ease integration with CMake,
+2. Provide an RAII mechanism for ImGui scopes,
+3. Provide some minor ImGui helpers,
 
 ![Master Branch](https://github.com/kfsone/imguiwrap/actions/workflows/cmake.yml/badge.svg)
 
