@@ -48,24 +48,24 @@ conditionally invoke the appropriate `End()` function.
 You can do this in a completely conventional way:
 
 ```c++
-	dear::MainMenuBar bar("Main Menu");
-	if (bar) {
-		dear::Menu file("File");
-		if (file) {
-			...
-		}
-	}
+    dear::MainMenuBar bar("Main Menu");
+    if (bar) {
+        dear::Menu file("File");
+        if (file) {
+            ...
+        }
+    }
 ```
 
 but the classes also implement an `operator&&` which accepts a callable so that you can use them
 anonymously:
 
 ```c++
-	dear::MainMenuBar("Main Menu")  &&  [](){
-		dear::Menu("File")  &&  [](){
-			...
-		};
-	};
+    dear::MainMenuBar("Main Menu")  &&  [](){
+        dear::Menu("File")  &&  [](){
+            ...
+        };
+    };
 ```
 
 And yes, it knows that `ImGui::Begin()` must always have a matching `ImGui::End` while
@@ -78,12 +78,12 @@ And yes, it knows that `ImGui::Begin()` must always have a matching `ImGui::End`
 - You can also use the name of a function:
 
 ```c++
-	void main_menu() noexcept {
-		dear::Menu("File") && [](){
-		};
-	}
+    void main_menu() noexcept {
+        dear::Menu("File") && [](){
+        };
+    }
 
-	dear::MainMenuBar("Main Menu") && main_menu;
+    dear::MainMenuBar("Main Menu") && main_menu;
 ```
 
 ## Minor helpers:
@@ -93,8 +93,8 @@ And yes, it knows that `ImGui::Begin()` must always have a matching `ImGui::End`
 Provides a scoped wrapper that will only execute your callable if the previous item is hovered.
 
 ```c++
-	dear::Text("[help]");
-	dear::ItemTooltip(/*flags*/) && []() { dear::Text("Help is not available"); }
+    dear::Text("[help]");
+    dear::ItemTooltip(/*flags*/) && []() { dear::Text("Help is not available"); }
 ```
 
 ### dear::EditTableFlags and EditWindowFlags
@@ -109,18 +109,18 @@ static bool mywindow_editable = false;
 
 void debug_menu()
 {
-	dear::Menu("Debug") && []() {
-		// Only enable this option if mywindow is being shown.
-		dear::MenuItem("Edit MyWindow flags", NULL, &mywindow_editable, mywindow_visible));
-	};
+    dear::Menu("Debug") && []() {
+        // Only enable this option if mywindow is being shown.
+        dear::MenuItem("Edit MyWindow flags", NULL, &mywindow_editable, mywindow_visible));
+    };
 }
 
 void show_my_window()
 {
-	debug_menu();
-	dear::Begin("My Window", &mywindow_visible, mywindow_flags) && []() {
-		dear::Text("Hello!");
-	};
+    debug_menu();
+    dear::Begin("My Window", &mywindow_visible, mywindow_flags) && []() {
+        dear::Text("Hello!");
+    };
 }
 ```
 
@@ -133,8 +133,8 @@ It also allows you to avoid the `vsnprintf` overhead of `ImGui::Text` by taking 
 parameters:
 
 ```c++
-	ImGui::Text("hello, %s!", "world");  // goes through vsnprintf equiv
-	dear::Text("hello, %s!", "world");   // uses perfect-forwarding
+    ImGui::Text("hello, %s!", "world");  // goes through vsnprintf equiv
+    dear::Text("hello, %s!", "world");   // uses perfect-forwarding
 ```
 
 ### dear::MenuItem specializations
@@ -180,35 +180,35 @@ bool is unused and eliminate it.
 In the following piece of code:
 
 ```cpp
-	dear::MenuBar("File") && []() {
-	};
+    dear::MenuBar("File") && []() {
+    };
 ```
 
 we are (1) constructing a temporary and passing a (3) lambda to an operator method on it
 (2) before the object destructs (4).
 
 ```cpp
-	dear::MenuBar("File")
-	^^^^^^^^^-1-^^^^^^^^^
-						  && 
-					     ^-2-^
-						       [](){ }
-							   ^^-3-^^
-							           ;
-									 ^-4-^
+    dear::MenuBar("File")
+    ^^^^^^^^^-1-^^^^^^^^^
+                          && 
+                         ^-2-^
+                               [](){ }
+                               ^^-3-^^
+                                       ;
+                                     ^-4-^
 ```
 
 To expand this out:
 
 ```cpp
-	{
-		dear::MenuBar temp("File");    // temp.ok_ = ImGui::BeginMenuBar("File");
+    {
+        dear::MenuBar temp("File");    // temp.ok_ = ImGui::BeginMenuBar("File");
 
-		auto noop_lambda = [] () {};
+        auto noop_lambda = [] () {};
 
-		temp.operator&&(noop_lambda);  // if (temp.ok_) noop_lambda();
+        temp.operator&&(noop_lambda);  // if (temp.ok_) noop_lambda();
 
-	} // invokes temp.~MenuBar();      -> if (temp.ok_) { ImGui::EndMenuBar(); }
+    } // invokes temp.~MenuBar();      -> if (temp.ok_) { ImGui::EndMenuBar(); }
 ```
 
 
@@ -217,8 +217,8 @@ To expand this out:
 There is a `Dockerfile` and `docker-build.sh` provided which I use to text the Linux
 build.
 
-	> docker pull kfsone/imguibuild
-	or
-	> docker build --tag kfsone/imguibuild
-	> docker run --rm -it -v ${pwd}:/src kfsone/imguibuild
-	> docker-build/example/dear_example
+    > docker pull kfsone/imguibuild
+    or
+    > docker build --tag kfsone/imguibuild
+    > docker run --rm -it -v ${pwd}:/src kfsone/imguibuild
+    > docker-build/example/dear_example
