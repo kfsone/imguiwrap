@@ -58,7 +58,7 @@ You can do this in a completely conventional way:
 ```
 
 but the classes also implement an `operator&&` which accepts a callable so that you can use them
-anonymously:
+anonymously and in an increasingly modern compositional style:
 
 ```c++
     dear::MainMenuBar("Main Menu")  &&  [](){
@@ -67,6 +67,8 @@ anonymously:
         };
     };
 ```
+
+(This form might, for instance, look familiar to [boost/ut](https://github.com/boost-ext/ut) users)
 
 And yes, it knows that `ImGui::Begin()` must always have a matching `ImGui::End` while
 `ImGui::BeginMainMenuBar` only needs `ImGui::EndMainMenuBar` if the begin returned true.
@@ -166,6 +168,41 @@ If crazy RAII operator&& is too much for you, `imguiwrap.helpers.h` provides a s
 To emphasize that the callable will only be invoked *if* the element is
 being rendered.
 
+The approach was inspired by [Boost μt](https://github.com/boost-ext/ut)'s style
+of writing unit tests:
+
+```cpp
+	"life"_test = [] {
+		int i = 43;
+		expect(42_i == i);
+	};
+```
+
+and I seriously considered
+
+```cpp
+	"File"_Menu = [] {
+		"Open"_MenuItem = onOpen;
+		...
+	};
+```
+
+but the model breaks down for no- and multi-argument cases and I wanted something consistent.
+
+Ultimately while I was reading a mock-up line, I found myself saying "then" so it was either
+`&&`, `>>` or `<<`. Connotations imbued by `iostreams` into both of the latter made `>>` feel
+very akward while `<<` was less akward but less obviously conditional.
+
+```cpp
+	MainMenuBar() << [] { Menu(get_filename(argv[0])); };
+	// vs
+	MainMenuBar() && [] { Menu(get_filename(argv[0])); };
+```
+
+The short-circuit, when the menu bar is not being displayed, is far more obvious in the second form.
+
+
+
 ## How do the RAII types work?
 
 Each type is a *concrete instantiation* of a 
@@ -214,7 +251,7 @@ To expand this out:
 
 # Docker build
 
-There is a `Dockerfile` and `docker-build.sh` provided which I use to text the Linux
+There is a `Dockerfile` and `docker-build.sh` provided which I use to test the Linux
 build.
 
     > docker pull kfsone/imguibuild
