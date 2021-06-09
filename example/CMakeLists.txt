@@ -23,3 +23,4 @@ endmacro()
 
 add_imguiwrap_example(dear_example)
 add_imguiwrap_example(edit_window_example)
+add_imguiwrap_example(dear_example2)
