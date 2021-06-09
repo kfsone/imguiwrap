@@ -166,20 +166,30 @@ void
 EditTableFlags(const char* title, bool* showing, ImGuiTableFlags* flags) noexcept
 {
     // List of the sizing flag names.
-    static constexpr std::array<const char*, 5> sizes = {"Default", "FixedFit", "FixedSame", "StretchProp", "StretchSame"};
+    struct SizeInfo { const char* name; ImGuiTableFlags flag; };
+    static constexpr std::array<SizeInfo, 5> sizes {
+        SizeInfo{ "Default", 0 },
+        SizeInfo{ "FixedFit", ImGuiTableFlags_SizingFixedFit },
+        SizeInfo{ "FixedSame", ImGuiTableFlags_SizingFixedSame },
+        SizeInfo{ "StretchProp", ImGuiTableFlags_SizingStretchProp },
+        SizeInfo{ "StretchSame", ImGuiTableFlags_SizingStretchSame },
+    };
 
     flagsWindow(title, showing, [=]() noexcept {
         // Drop-boxes first.
         // Sizing is actually a discrete integer value, shifted 13 bits into the flag.
-        int sizing = *flags & (ImGuiTableFlags_SizingMask_);
-        dear::Combo("Sizing", sizes[sizing >> ImGuiTableFlags_SizingShift]) && [&] {
+        int sizeFlag = *flags & ImGuiTableFlags_SizingMask_;
+        int sizeSelected = 0;
+        for (size_t i = 1; i < sizes.size(); i++)
+            if (sizes[i].flag == sizeFlag)
+                sizeSelected = i;
+        dear::Combo("Sizing", sizes[sizeSelected].name) && [&] {
             for (size_t i = 0; i < sizes.size(); i++)
             {
-                if (ImGui::Selectable(sizes[i]))
-                    sizing = i;
+                if (ImGui::Selectable(sizes[i].name))
+                    *flags = (*flags & ~ImGuiTableFlags_SizingMask_) | sizes[i].flag;
             }
         };
-        *flags = (*flags & ~ImGuiTableFlags_SizingMask_) | sizing;
 
         // Checkboxes.
         ImGui::CheckboxFlags("Resizable", flags, ImGuiTableFlags_Resizable);
