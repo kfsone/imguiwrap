@@ -22,7 +22,7 @@
         void about_tab() { ImGui::Text("I made this."); }
         void bars() {
             dear::TabItem("About") && about_tab;
-            dear::TabItem("Help") && [] { ImGui::Text("No help for you."); };
+            dear::TabItem("Help") && [](){ ImGui::Text("No help for you."); };
         }
 
     is equivalent to
@@ -55,35 +55,35 @@ windowFn()
         return 0;
 
     static bool is_quitting;
-    dear::Begin("Visualizer", &show_visualizer) && [] {
-        dear::MainMenuBar() && [] {
-            dear::Menu("File") && [] {
+    dear::Begin("Visualizer", &show_visualizer) && [](){
+        dear::MainMenuBar() && [](){
+            dear::Menu("File") && [](){
                 ImGui::MenuItem("Wibble", NULL, &selected);
                 ImGui::MenuItem("BOOM");
             };
-            dear::Menu("Quitters") && [] {
+            dear::Menu("Quitters") && [](){
                 is_quitting = ImGui::MenuItem("QUIT NAOW");
             };
         };
         ImGui::Text("hello");
-        dear::TabBar("##TabBar") && [] {
-            dear::TabItem("Files") && [] {
+        dear::TabBar("##TabBar") && [](){
+            dear::TabItem("Files") && [](){
                 ImGui::Text("...files...");
             };
-            dear::TabItem("Blueprints") && [] {
+            dear::TabItem("Blueprints") && [](){
                 ImGui::Text("...blueprints...");
             };
-            dear::TabItem("Enums") && [] {
+            dear::TabItem("Enums") && [](){
                 ImGui::Text("...enums...");
             };
-            dear::TabItem("Prototypes") && [] {
+            dear::TabItem("Prototypes") && [](){
                 ImGui::Text("...prototypes...");
             };
-            dear::TabItem("More") && [] {
-                dear::Child("hello") && [] {
-                    dear::Group() && [] {
-                        dear::Combo("me", "you") && [] {
-                            dear::Tooltip() && [] {
+            dear::TabItem("More") && [](){
+                dear::Child("hello") && [](){
+                    dear::Group() && [](){
+                        dear::Combo("me", "you") && [](){
+                            dear::Tooltip() && [](){
                                 ImGui::SetTooltip("You are now viewing a tooltip...");
                             };
                         };

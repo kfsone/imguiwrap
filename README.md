@@ -172,7 +172,7 @@ The approach was inspired by [Boost μt](https://github.com/boost-ext/ut)'s styl
 of writing unit tests:
 
 ```cpp
-	"life"_test = [] {
+	"life"_test = [](){
 		int i = 43;
 		expect(42_i == i);
 	};
@@ -181,7 +181,7 @@ of writing unit tests:
 and I seriously considered
 
 ```cpp
-	"File"_Menu = [] {
+	"File"_Menu = [](){
 		"Open"_MenuItem = onOpen;
 		...
 	};
@@ -194,9 +194,9 @@ Ultimately while I was reading a mock-up line, I found myself saying "then" so i
 very akward while `<<` was less akward but less obviously conditional.
 
 ```cpp
-	MainMenuBar() << [] { Menu(get_filename(argv[0])); };
+	MainMenuBar() << [](){ Menu(get_filename(argv[0])); };
 	// vs
-	MainMenuBar() && [] { Menu(get_filename(argv[0])); };
+	MainMenuBar() && [](){ Menu(get_filename(argv[0])); };
 ```
 
 The short-circuit, when the menu bar is not being displayed, is far more obvious in the second form.

@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(CMAKE_CXX_STANDARD "20")
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set (IMGUIWRAP_CXX_STANDARD "17" CACHE STRING "Specify the C++ standard version Imgui will use (must be 17 or higher")
+
+set (CMAKE_CXX_STANDARD "${IMGUIWRAP_CXX_STANDARD}")
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project("imguiwrap")
 
