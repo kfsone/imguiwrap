@@ -4,10 +4,6 @@
 
 #include "imgui.h"
 
-#ifndef DEAR_NO_STRINGVIEW
-#include <string_view>
-#endif
-
 #ifndef DEAR_NO_STRING
 #include <string>
 #endif
@@ -292,38 +288,6 @@ namespace dear
     };
 
     //// Text helpers
-
-    // Alternative implementation of ImGui::Text which avoids the overhead
-    // of va_args and a vsnprintf call, by forwarding the print expression straight
-    // to snprintf.
-    template <class... Args>
-#ifndef _MSC_VER
-	__attribute__((__format__(__printf__, 1, 0)))
-#endif
-    void
-    Text(const char *fmt, Args &&...args) noexcept
-    {
-        const auto formatter = [&](char *into, size_t size)
-        {
-            return into + snprintf(into, size, fmt, std::forward<Args>(args)...);
-        };
-        extern void _text_impl(std::function<const char *(char *, size_t)>) noexcept;
-        _text_impl(formatter);
-    }
-
-// std::string_view helpers.
-#ifndef DEAR_NO_STRINGVIEW
-    static inline void
-    Text(std::string_view str) noexcept
-    {
-        ImGui::TextUnformatted(str.data(), str.data() + str.size());
-    }
-    static inline void
-    TextUnformatted(std::string_view str) noexcept
-    {
-        ImGui::TextUnformatted(str.data(), str.data() + str.size());
-    }
-#endif
 
 // std::string helpers.
 #ifndef DEAR_NO_STRING
