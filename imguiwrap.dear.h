@@ -297,6 +297,9 @@ namespace dear
     // of va_args and a vsnprintf call, by forwarding the print expression straight
     // to snprintf.
     template <class... Args>
+#ifndef _MSC_VER
+	__attribute__((__format__(__printf__, 1, 0)))
+#endif
     void
     Text(const char *fmt, Args &&...args) noexcept
     {
