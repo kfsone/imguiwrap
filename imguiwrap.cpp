@@ -215,7 +215,7 @@ EditTableFlags(const char* title, bool* showing, ImGuiTableFlags* flags) noexcep
         // Drop-boxes first.
         // Sizing is actually a discrete integer value, shifted 13 bits into the flag.
         int sizeFlag = *flags & ImGuiTableFlags_SizingMask_;
-        int sizeSelected = 0;
+        size_t sizeSelected = 0;
         for (size_t i = 1; i < sizes.size(); i++)
             if (sizes[i].flag == sizeFlag)
                 sizeSelected = i;
