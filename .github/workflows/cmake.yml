@@ -19,7 +19,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        os: [windows-latest, macos-latest, ubuntu-18.04, ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v2
@@ -27,8 +27,9 @@ jobs:
         submodules: true
 
     - name: Install Ubuntu dependencies
-      if: matrix.os == 'ubuntu-latest'
-      run: sudo apt-get install -qy libx11-dev libsdl2-dev libglfw3-dev
+      if: startsWith(matrix.os, 'ubuntu')
+      run: |
+        sudo apt update -qy ; sudo apt install -qy libx11-dev libsdl2-dev libglfw3-dev
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
