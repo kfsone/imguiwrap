@@ -117,8 +117,9 @@ as title, size, etc.
 
     int main(int argc, const char** argv)
     {
-        // Passing an ImGuiWrapConfig with just our custom title.
-        return imgui_main(ImGuiWrapConfig{"Hello World Example"}, my_render_function);
+		ImGuiWrapConfig config{};
+		config.windowTitle_ = "Hello World Example";
+        return imgui_main(config, my_render_function);
     }
 ```
 
