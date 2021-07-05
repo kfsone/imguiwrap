@@ -88,6 +88,40 @@ And yes, it knows that `ImGui::Begin()` must always have a matching `ImGui::End`
     dear::MainMenuBar("Main Menu") && main_menu;
 ```
 
+## imgui_main loop
+
+ImGuiWrap provides a simple glfw-backed main loop implementation that brings up a window and
+invokes a handler function for every frame, until the callback's `std::optional<int>` has
+a value. This is then used as the exit code.
+
+This is intended as a helper for the typical use case where the GUI itself is the main loop.
+It has been tested on Windows 10, Windows 11, Ubuntu Linux and MacOS Big Sur.
+
+The `ImGuiWrapConfig` struct is used to provide initial configuration of the window, such
+as title, size, etc.
+
+```c++
+    ImGuiWrapperReturnType
+    my_render_function()
+    {
+        bool show_window { true };
+        dear::Begin("Subwindow", &show_window) && [](){
+            dear::Text("Hello, world!");
+        };
+        // Return a concrete value to exit the loop.
+        if (!show_window)
+            return 0;
+        // Return nothing to continue the loop.
+        return {};
+    }
+
+    int main(int argc, const char** argv)
+    {
+        // Passing an ImGuiWrapConfig with just our custom title.
+        return imgui_main(ImGuiWrapConfig{"Hello World Example"}, my_render_function);
+    }
+```
+
 ## Minor helpers:
 
 ### dear::ItemTooltip
@@ -126,7 +160,7 @@ void show_my_window()
 }
 ```
 
-### dear::Text specialiations
+### dear::Text specializations
 
 `dear::Text` (and TextUnformatted) specializes for `std::string` and `std::string_view`, which
 can be disabled by defining `DEAR_NO_STRING` and `DEAR_NO_STRINGVIEW` accordingly.

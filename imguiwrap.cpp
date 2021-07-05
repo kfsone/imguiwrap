@@ -55,7 +55,7 @@ glfw_error_callback(int error, const char* description) noexcept
 // the passed ImGuiWrapperFn repeatedly until the std::optional it
 // returns has a value, which is then returned as the exit code.
 int
-imgui_main(ImGuiWrapperFn mainFn) noexcept
+imgui_main(const ImGuiWrapConfig& config, ImGuiWrapperFn mainFn) noexcept
 {
     // Setup window
     glfwSetErrorCallback(glfw_error_callback);
@@ -86,11 +86,12 @@ imgui_main(ImGuiWrapperFn mainFn) noexcept
 #endif
 
     // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "ImGui Test", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(config.width_, config.height_, config.windowTitle_, NULL, NULL);
     if (window == NULL)
         return 1;
+
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);  // Enable vsync
+    glfwSwapInterval(config.enableVsync_ ? 1 : 0);  // Enable vsync
 
     // Initialize OpenGL loader
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
@@ -121,9 +122,8 @@ imgui_main(ImGuiWrapperFn mainFn) noexcept
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+    if (config.keyboardNav_)
+        ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
 
     ImGui::StyleColorsDark();
 
@@ -132,12 +132,9 @@ imgui_main(ImGuiWrapperFn mainFn) noexcept
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    // Our state
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-    std::optional<int> exitCode{};
-
     // Main loop
+    const auto& clearColor = config.clearColor_;
+    std::optional<int> exitCode{};
     while (!exitCode.has_value() && !glfwWindowShouldClose(window))
     {
         // Poll and handle events (inputs, window resize, etc.)
@@ -161,8 +158,8 @@ imgui_main(ImGuiWrapperFn mainFn) noexcept
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
-        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w,
-                     clear_color.w);
+        glClearColor(clearColor.x * clearColor.w, clearColor.y * clearColor.w, clearColor.z * clearColor.w,
+                     clearColor.w);
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

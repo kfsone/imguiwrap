@@ -103,5 +103,11 @@ windowFn()
 int
 main(int, const char**)
 {
-    return imgui_main(windowFn);
+#if __cplusplus__ >= 202000ULL
+    ImGuiWrapConfig config{.windowTitle_ = "dear::Example", .width_ = 1280, .height_ = 600};
+#else
+    ImGuiWrapConfig config{/*.windowTitle_=*/"dear::Example", /*.width_=*/1280, /*.height_=*/600};
+#endif
+
+    return imgui_main(config, windowFn);
 }

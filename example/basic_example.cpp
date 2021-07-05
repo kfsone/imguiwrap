@@ -5,9 +5,9 @@
 ImGuiWrapperReturnType
 windowFn()
 {
-    static bool show_visualizer { true };
+    static bool show_visualizer{true};
     DEFER(ImGui::End(););
-	// If the user closes the visualizer, exit with rc 0.
+    // If the user closes the visualizer, exit with rc 0.
     if (!ImGui::Begin("Visualizer", &show_visualizer))
         return 0;
 
@@ -37,12 +37,18 @@ windowFn()
         }
     }
 
-	// Return nothing.
-	return {};
+    // Return nothing.
+    return {};
 }
 
 int
-main(int, char**)
+main(int, const char**)
 {
-    return imgui_main(windowFn);
+#if __cplusplus__ >= 202000ULL
+    ImGuiWrapConfig config{.windowTitle_ = "Basic Example", .width_ = 1280, .height_ = 600};
+#else
+    ImGuiWrapConfig config{/*.windowTitle_=*/"Basic Example", /*.width_=*/1280, /*.height_=*/600};
+#endif
+
+    return imgui_main(config, windowFn);
 }

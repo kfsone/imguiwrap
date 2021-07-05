@@ -9,9 +9,11 @@ ImGuiWrapperReturnType my_render_fn();
 // imguiwrap provides an optional "imgui_main" function that will setup ImGui and
 // then repeatedly invoke your specified function/callable until that returns a
 // std::optional<int> with a value.
-int main(int, const char **)
+int
+main(int, const char **)
 {
-    return imgui_main(my_render_fn);
+    const ImGuiWrapConfig config{};  // Using defaults.
+    return imgui_main(config, my_render_fn);
 }
 
 // This variable decides whether to show the "Window Flag" edit window.
