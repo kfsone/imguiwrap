@@ -19,6 +19,7 @@ my_render_function()
 int
 main(int, const char**)
 {
-    // Passing an ImGuiWrapConfig with just our custom title.
-    return imgui_main(ImGuiWrapConfig{"Hello World Example"}, my_render_function);
+    // Passing an entirely-defaulted config, will give us the window title "Application"
+	// and the default window configuration.
+    return imgui_main(ImGuiWrapConfig{}, my_render_function);
 }
