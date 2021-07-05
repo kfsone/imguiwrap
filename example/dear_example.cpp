@@ -106,7 +106,10 @@ main(int, const char**)
 #if __cplusplus__ >= 202000ULL
     ImGuiWrapConfig config{.windowTitle_ = "dear::Example", .width_ = 1280, .height_ = 600};
 #else
-    ImGuiWrapConfig config{/*.windowTitle_=*/"dear::Example", /*.width_=*/1280, /*.height_=*/600};
+    ImGuiWrapConfig config{};
+    config.windowTitle_ = "dear::Example";
+    config.width_ = 800;
+    config.height_ = 600;
 #endif
 
     return imgui_main(config, windowFn);

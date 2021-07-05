@@ -20,6 +20,6 @@ int
 main(int, const char**)
 {
     // Passing an entirely-defaulted config, will give us the window title "Application"
-	// and the default window configuration.
+    // and the default window configuration.
     return imgui_main(ImGuiWrapConfig{}, my_render_function);
 }
