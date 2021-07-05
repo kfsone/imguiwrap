@@ -101,7 +101,7 @@ windowFn()
 }
 
 int
-main(int argc, char** argv)
+main(int, const char**)
 {
-    return imgui_main(argc, argv, windowFn);
+    return imgui_main(windowFn);
 }

@@ -13,4 +13,4 @@
 using ImGuiWrapperReturnType = std::optional<int>;
 using ImGuiWrapperFn = std::function<ImGuiWrapperReturnType()>;
 
-extern int imgui_main(int, char**, ImGuiWrapperFn mainFn) noexcept;
+extern int imgui_main(ImGuiWrapperFn mainFn) noexcept;

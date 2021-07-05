@@ -55,7 +55,7 @@ glfw_error_callback(int error, const char* description) noexcept
 // the passed ImGuiWrapperFn repeatedly until the std::optional it
 // returns has a value, which is then returned as the exit code.
 int
-imgui_main(int, char**, ImGuiWrapperFn mainFn) noexcept
+imgui_main(ImGuiWrapperFn mainFn) noexcept
 {
     // Setup window
     glfwSetErrorCallback(glfw_error_callback);
