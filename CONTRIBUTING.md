@@ -16,5 +16,6 @@ If you identify a coding issue that results in sub-optimal performance for one o
 
 # Pull Requests/Forks
 
-If you choose to embark on a significant amount of work fixing/extending/customizing ImguiWrap, please create a corresponding issue
-if one doesn't already exist so I can have a sense of what impact future changes may have.
+Pull Requests are welcome. For small changes, you don't need to do anything special but if you are about to embark on
+a large chunk of work or a fork, I encourage you to create an issue so I can try to avoid getting in your way and/or
+creating merge-mayhem for your contribution.
