@@ -18,12 +18,15 @@ add_library(
 	imguiwrap.dear.h
 )
 
+find_package(GLEW REQUIRED)
+
 target_include_directories(
 	imguiwrap
 
 	PUBLIC
 
 	${CMAKE_CURRENT_SOURCE_DIR}
+	${GLEW_INCLUDE_DIRS}
 )
 
 target_link_libraries(
@@ -32,6 +35,7 @@ target_link_libraries(
 	PUBLIC
 
 	imgui
+	${GLEW_LIBRARIES}
 )
 
 if (WIN32)
