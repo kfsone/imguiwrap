@@ -42,9 +42,9 @@ int main(int, const char **)
       .width_ = 1280,
       .height_ = 600,
       .clearColor_ = ImVec4{0.4f, 0.6f, 0.5f, 1.0f},
-      .enableVsync = false, // default is true
-      .keyboardNav = false, // default is true
-      .startDark_ = false,  // default is true
+      .enableVsync_ = false, // default is true
+      .keyboardNav_ = false, // default is true
+      .startDark_ = false,   // default is true
   };
 #else
   ImGuiWrapConfig config{
