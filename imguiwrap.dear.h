@@ -22,6 +22,9 @@ namespace dear
     // ImGuiWindowFlags options so that a flags property can be edited in real-time.
     extern void EditWindowFlags(const char *editWindowTitle, bool *showing, ImGuiWindowFlags *flags) noexcept;
 
+    // SetHostWindowSize lets you change the dimensions of the native window.
+    extern void SetHostWindowSize(int x, int y) noexcept;
+
     // scoped_effect is a helper that uses automatic object lifetime to control
     // the invocation of a callable after potentially calling additional code,
     // allowing for easy inline creation of scope guards.

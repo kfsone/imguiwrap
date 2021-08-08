@@ -43,6 +43,8 @@ using namespace gl;
 
 #include "imgui_internal.h"
 
+static std::optional<std::pair<int, int>> newSize{};
+
 // glfw_error_callback is an internal callback for logging any errors raised
 // by glfw.
 static void
@@ -135,6 +137,7 @@ imgui_main(const ImGuiWrapConfig& config, ImGuiWrapperFn mainFn) noexcept
     // Main loop
     const auto& clearColor = config.clearColor_;
     std::optional<int> exitCode{};
+
     while (!exitCode.has_value() && !glfwWindowShouldClose(window))
     {
         // Poll and handle events (inputs, window resize, etc.)
@@ -164,6 +167,12 @@ imgui_main(const ImGuiWrapConfig& config, ImGuiWrapperFn mainFn) noexcept
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(window);
+
+        if (newSize.has_value())
+        {
+            glfwSetWindowSize(window, newSize.value().first, newSize.value().second);
+            newSize.reset();
+        }
     }
 
     // Cleanup
@@ -192,6 +201,12 @@ flagsWindow(const char* title, bool* showing, std::function<void(void)> impl) no
 
 namespace dear
 {
+
+void
+SetHostWindowSize(int x, int y) noexcept
+{
+    newSize = std::pair(x, y);
+}
 
 // EditTableFlags presents a window with selections for all the flags available
 // for a table, allowing you to dynamically modify the table's appearance/layout.
