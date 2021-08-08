@@ -1,18 +1,18 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required (VERSION 3.16)
 
-set(CMAKE_CXX_STANDARD "${IMGUIWRAP_CXX_STANDARD}")
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set (CMAKE_CXX_STANDARD "${IMGUIWRAP_CXX_STANDARD}")
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project("imgui")
+project ("imgui")
 
-set(IMGUI_PLATFORM_BACKEND "glfw" CACHE STRING "Specify which imgui platform backend to use")
-set(IMGUI_RENDERER_BACKEND "opengl3" CACHE STRING "Specify which imgui renderer backend to use")
+set (IMGUI_PLATFORM_BACKEND "glfw" CACHE STRING "Specify which imgui platform backend to use")
+set (IMGUI_RENDERER_BACKEND "opengl3" CACHE STRING "Specify which imgui renderer backend to use")
 
-set(IMGUI_GL3W_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/examples/libs/gl3w)
+set (IMGUI_GL3W_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/examples/libs/gl3w)
 
-find_package(OpenGL REQUIRED)
+find_package (OpenGL REQUIRED)
 
-set(
+set (
 	IMGUI_SOURCES
 
 	src/imgui.cpp
@@ -25,20 +25,20 @@ set(
 	src/imgui_widgets.cpp
 	${IMGUI_GL3W_PATH}/GL/gl3w.c
 )
-set(
+set (
 	IMGUI_PLATFORM_SOURCES
 
 	src/backends/imgui_impl_${IMGUI_PLATFORM_BACKEND}.cpp
 	src/backends/imgui_impl_${IMGUI_PLATFORM_BACKEND}.h
 )
-set(
+set (
 	IMGUI_RENDERER_SOURCES
 
 	src/backends/imgui_impl_${IMGUI_RENDERER_BACKEND}.cpp
 	src/backends/imgui_impl_${IMGUI_RENDERER_BACKEND}.h
 )
 
-add_library(
+add_library (
 	imgui
 
 	${IMGUI_SOURCES}
@@ -46,7 +46,7 @@ add_library(
 	${IMGUI_RENDERER_SOURCES}
 )
 
-target_include_directories(
+target_include_directories (
 	imgui
 
 	PUBLIC
@@ -57,7 +57,7 @@ target_include_directories(
 	${IMGUI_GL3W_PATH}
 )
 
-target_link_libraries(
+target_link_libraries (
 	imgui
 
 	PUBLIC
