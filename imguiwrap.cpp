@@ -294,6 +294,34 @@ EditWindowFlags(const char* title, bool* showing, ImGuiWindowFlags* flags) noexc
     });
 }
 
+// EditWindowFlags presents a window for selecting text input field flags.
+void
+EditInputTextFlags(const char* title, bool* showing, ImGuiInputTextFlags* flags) noexcept
+{
+    flagsWindow(title, showing, [=]() noexcept {
+        ImGui::CheckboxFlags("CharsDecimal", flags, ImGuiInputTextFlags_CharsDecimal);
+        ImGui::CheckboxFlags("CharsHexadecimal", flags, ImGuiInputTextFlags_CharsHexadecimal);
+        ImGui::CheckboxFlags("CharsUppercase", flags, ImGuiInputTextFlags_CharsUppercase);
+        ImGui::CheckboxFlags("CharsNoBlank", flags, ImGuiInputTextFlags_CharsNoBlank);
+        ImGui::CheckboxFlags("AutoSelectAll", flags, ImGuiInputTextFlags_AutoSelectAll);
+        ImGui::CheckboxFlags("EnterReturnsTrue", flags, ImGuiInputTextFlags_EnterReturnsTrue);
+        ImGui::CheckboxFlags("CallbackCompletion", flags, ImGuiInputTextFlags_CallbackCompletion);
+        ImGui::CheckboxFlags("CallbackHistory", flags, ImGuiInputTextFlags_CallbackHistory);
+        ImGui::CheckboxFlags("CallbackAlways", flags, ImGuiInputTextFlags_CallbackAlways);
+        ImGui::CheckboxFlags("CallbackCharFilter", flags, ImGuiInputTextFlags_CallbackCharFilter);
+        ImGui::CheckboxFlags("AllowTabInput", flags, ImGuiInputTextFlags_AllowTabInput);
+        ImGui::CheckboxFlags("CtrlEnterForNewLine", flags, ImGuiInputTextFlags_CtrlEnterForNewLine);
+        ImGui::CheckboxFlags("NoHorizontalScroll", flags, ImGuiInputTextFlags_NoHorizontalScroll);
+        ImGui::CheckboxFlags("AlwaysOverwrite", flags, ImGuiInputTextFlags_AlwaysOverwrite);
+        ImGui::CheckboxFlags("ReadOnly", flags, ImGuiInputTextFlags_ReadOnly);
+        ImGui::CheckboxFlags("Password", flags, ImGuiInputTextFlags_Password);
+        ImGui::CheckboxFlags("NoUndoRedo", flags, ImGuiInputTextFlags_NoUndoRedo);
+        ImGui::CheckboxFlags("CharsScientific", flags, ImGuiInputTextFlags_CharsScientific);
+        ImGui::CheckboxFlags("CallbackResize", flags, ImGuiInputTextFlags_CallbackResize);
+        ImGui::CheckboxFlags("CallbackEdit", flags, ImGuiInputTextFlags_CallbackEdit);
+    });
+}
+
 // _text_impl is a helper for writing Text trampolines for non-c-strings.
 void
 _text_impl(std::function<const char*(char*, size_t)> formatter) noexcept

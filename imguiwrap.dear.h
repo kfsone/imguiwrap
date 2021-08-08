@@ -18,6 +18,9 @@ namespace dear
     // ImGuiTableFlags options so that a flags property can be edited in real-time.
     extern void EditTableFlags(const char *editWindowTitle, bool *showing, ImGuiTableFlags *flags) noexcept;
 
+    // EditWindowFlags presents a window for selecting text input field flags.
+    extern void EditInputTextFlags(const char* title, bool* showing, ImGuiInputTextFlags* flags) noexcept;
+        
     // EditWindowFlags provides a window which checkboxes for all of the
     // ImGuiWindowFlags options so that a flags property can be edited in real-time.
     extern void EditWindowFlags(const char *editWindowTitle, bool *showing, ImGuiWindowFlags *flags) noexcept;
