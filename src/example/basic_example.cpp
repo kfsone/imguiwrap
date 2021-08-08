@@ -12,26 +12,21 @@ windowFn()
         return 0;
 
     ImGui::Text("hello");
-    if (ImGui::BeginTabBar("##TabBar"))
-    {
+    if (ImGui::BeginTabBar("##TabBar")) {
         DEFER(ImGui::EndTabBar(););
-        if (ImGui::BeginTabItem("Files"))
-        {
+        if (ImGui::BeginTabItem("Files")) {
             DEFER(ImGui::EndTabItem(););
             ImGui::Text("...files...");
         }
-        if (ImGui::BeginTabItem("Blueprints"))
-        {
+        if (ImGui::BeginTabItem("Blueprints")) {
             DEFER(ImGui::EndTabItem(););
             ImGui::Text("...blueprints...");
         }
-        if (ImGui::BeginTabItem("Enums"))
-        {
+        if (ImGui::BeginTabItem("Enums")) {
             DEFER(ImGui::EndTabItem(););
             ImGui::Text("... enums...");
         }
-        if (ImGui::BeginTabItem("Prototypes"))
-        {
+        if (ImGui::BeginTabItem("Prototypes")) {
             DEFER(ImGui::EndTabItem(););
             ImGui::Text("... prototypes...");
         }
@@ -49,8 +44,8 @@ main(int, const char**)
 #else
     ImGuiWrapConfig config{};
     config.windowTitle_ = "Basic Example";
-    config.width_ = 1280;
-    config.height_ = 600;
+    config.width_       = 1280;
+    config.height_      = 600;
 #endif
 
     return imgui_main(config, windowFn);

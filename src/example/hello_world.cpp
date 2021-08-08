@@ -5,8 +5,8 @@
 ImGuiWrapperReturnType
 my_render_function()
 {
-    bool show_window { true };
-    dear::Begin("Subwindow", &show_window) && [](){
+    bool show_window{true};
+    dear::Begin("Subwindow", &show_window) && []() {
         dear::Text("Hello, world!");
     };
     // Return a concrete value to exit the loop.

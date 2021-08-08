@@ -39,51 +39,51 @@
         }
 */
 
-#include "imguiwrap.helpers.h"
 #include "imguiwrap.dear.h"
+#include "imguiwrap.helpers.h"
 
 #include <string_view>
 
 ImGuiWrapperReturnType
 windowFn()
 {
-    static bool show_visualizer { true };
-    static bool selected { false };
+    static bool show_visualizer{true};
+    static bool selected{false};
 
     // Returning a value will translate to an exit code.
     if (!show_visualizer)
         return 0;
 
     static bool is_quitting;
-    dear::Begin("Visualizer", &show_visualizer) && [](){
-        dear::MainMenuBar() && [](){
-            dear::Menu("File") && [](){
+    dear::Begin("Visualizer", &show_visualizer) && []() {
+        dear::MainMenuBar() && []() {
+            dear::Menu("File") && []() {
                 ImGui::MenuItem("Wibble", NULL, &selected);
                 ImGui::MenuItem("BOOM");
             };
-            dear::Menu("Quitters") && [](){
+            dear::Menu("Quitters") && []() {
                 is_quitting = ImGui::MenuItem("QUIT NAOW");
             };
         };
         ImGui::Text("hello");
-        dear::TabBar("##TabBar") && [](){
-            dear::TabItem("Files") && [](){
+        dear::TabBar("##TabBar") && []() {
+            dear::TabItem("Files") && []() {
                 ImGui::Text("...files...");
             };
-            dear::TabItem("Blueprints") && [](){
+            dear::TabItem("Blueprints") && []() {
                 ImGui::Text("...blueprints...");
             };
-            dear::TabItem("Enums") && [](){
+            dear::TabItem("Enums") && []() {
                 ImGui::Text("...enums...");
             };
-            dear::TabItem("Prototypes") && [](){
+            dear::TabItem("Prototypes") && []() {
                 ImGui::Text("...prototypes...");
             };
-            dear::TabItem("More") && [](){
-                dear::Child("hello") && [](){
-                    dear::Group() && [](){
-                        dear::Combo("me", "you") && [](){
-                            dear::Tooltip() && [](){
+            dear::TabItem("More") && []() {
+                dear::Child("hello") && []() {
+                    dear::Group() && []() {
+                        dear::Combo("me", "you") && []() {
+                            dear::Tooltip() && []() {
                                 ImGui::SetTooltip("You are now viewing a tooltip...");
                             };
                         };
@@ -108,8 +108,8 @@ main(int, const char**)
 #else
     ImGuiWrapConfig config{};
     config.windowTitle_ = "dear::Example";
-    config.width_ = 800;
-    config.height_ = 600;
+    config.width_       = 800;
+    config.height_      = 600;
 #endif
 
     return imgui_main(config, windowFn);
