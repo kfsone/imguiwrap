@@ -21,7 +21,6 @@ if (USE_CLANG_TIDY)
 			"${CLANG_TIDY}"
 			-header-filter=imguiwrap*.h
 			-format-style=file
-			-fix
 		)
 		MESSAGE(STATUS "USE_CLANG_TIDY is on and CLANG_TIDY is ${CLANG_TIDY}, command line is ${CMAKE_CXX_CLANG_TIDY}")
 	endif ()
