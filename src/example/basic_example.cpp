@@ -1,3 +1,9 @@
+// Demonstration of basic, raw access to ImGui with the DEFER
+// macro for ensuring begins are matched with ends.
+//
+// See "dear_example" for using more modern C++ that doesn't
+// involve macros.
+
 #include "imguiwrap.helpers.h"
 
 #include <string_view>
