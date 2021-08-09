@@ -1,1 +1,1 @@
-Checks:              'bugprone-*,modernize-*,clang-analyzer-*,readability-braces-around-statements,performance-*,*,-hicpp*,-cppcoreguidelines-pro-*,-llvm*,-fuchsia*,-modernize-use-trailing-return-type'
+Checks:              'bugprone-*,modernize-*,clang-analyzer-*,readability-braces-around-statements,performance-*,*,-hicpp*,-cppcoreguidelines-pro-*,-llvm*,-fuchsia*,-modernize-use-trailing-return-type,-altera-*'
