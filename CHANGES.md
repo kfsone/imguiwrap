@@ -1,3 +1,6 @@
+v1.2.1 2021/08/17
+- imgui/glfw refresh, spec to capture fixes to multiline inputs
+
 v1.2.0 2021/08/08
 - added dear::SetHostWindowSize: allows `imgui_main` callbacks to alter native window size,
 - added dear::EditInputTextFlags: properties editor for input fields,
