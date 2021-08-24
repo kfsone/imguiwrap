@@ -22,6 +22,11 @@ endif ()
 
 project ("imguiwrap")
 
+# Are we standalone?
+if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+	set(IMGUIWRAP_STANDALONE TRUE)
+endif()
+
 add_subdirectory(vendor)
 
 add_subdirectory(src)

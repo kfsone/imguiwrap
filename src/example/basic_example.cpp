@@ -14,8 +14,9 @@ windowFn()
     static bool show_visualizer{true};
     DEFER(ImGui::End(););
     // If the user closes the visualizer, exit with rc 0.
-    if (!ImGui::Begin("Visualizer", &show_visualizer))
+    if (!ImGui::Begin("Visualizer", &show_visualizer)) {
         return 0;
+	}
 
     ImGui::Text("hello");
     if (ImGui::BeginTabBar("##TabBar")) {

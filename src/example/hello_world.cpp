@@ -10,10 +10,11 @@ my_render_function()
         dear::Text("Hello, world!");
     };
     // Return a concrete value to exit the loop.
-    if (!show_window)
-        return 0;
-    // Return nothing to continue the loop.
-    return {};
+	if (!show_window) {
+		return 0;
+	} else {
+		return {};
+	}
 }
 
 int

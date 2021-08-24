@@ -66,12 +66,6 @@ endif ()
 
 target_compile_options(imguiwrap PRIVATE ${IMGW_NO_RTTI} ${IMGW_NO_EXCEPTIONS} ${IMGW_ALL_WARNINGS})
 
-# Are we standalone?
-if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
-	set(IMGUIWRAP_STANDALONE TRUE)
-endif()
-
-
 if (IMGUIWRAP_STANDALONE)
 	add_subdirectory(example)
 endif ()

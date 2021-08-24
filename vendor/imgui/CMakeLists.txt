@@ -8,8 +8,6 @@ project ("imgui")
 set (IMGUI_PLATFORM_BACKEND "glfw" CACHE STRING "Specify which imgui platform backend to use")
 set (IMGUI_RENDERER_BACKEND "opengl3" CACHE STRING "Specify which imgui renderer backend to use")
 
-set (IMGUI_GL3W_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/examples/libs/gl3w)
-
 find_package (OpenGL REQUIRED)
 
 set (
@@ -23,7 +21,6 @@ set (
 	src/imgui_internal.h
 	src/imgui_tables.cpp
 	src/imgui_widgets.cpp
-	${IMGUI_GL3W_PATH}/GL/gl3w.c
 )
 set (
 	IMGUI_PLATFORM_SOURCES
@@ -54,7 +51,6 @@ target_include_directories (
 	${CMAKE_CURRENT_SOURCE_DIR}/src
 	${CMAKE_CURRENT_SOURCE_DIR}/src/backends
 	${IMGUI_GLFW_PATH}/include
-	${IMGUI_GL3W_PATH}
 )
 
 target_link_libraries (

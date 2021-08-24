@@ -11,8 +11,9 @@ my_render_fn()
         dear::Text("This is window 1");
         dear::Selectable("Click me to quit", &quitting);
     };
-    if (quitting)
+    if (quitting) {
         return 0;
+	}
 
     dear::Begin("Window 2", nullptr, ImGuiWindowFlags_AlwaysAutoResize) && []() {
         static constexpr size_t                             boarddim = 3;

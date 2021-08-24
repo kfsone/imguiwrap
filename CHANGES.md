@@ -1,3 +1,11 @@
+v1.2.2 2021/08/24
+- imgui refresh affecting gl3w:
+-- imgui now uses its own implementation of gl3w,
+-- adapted imguiwrapper's main to use it,
+- fixed examples not being built
+-- 'standlone' check always failed after moving code into src/,
+- cleaned up example code
+
 v1.2.1 2021/08/17
 - imgui/glfw refresh, spec to capture fixes to multiline inputs
 

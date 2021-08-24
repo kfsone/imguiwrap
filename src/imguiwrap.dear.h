@@ -237,12 +237,12 @@ namespace dear
         struct modal
         {
         };
-        Popup(modal, const char* name, bool* p_open = NULL, ImGuiWindowFlags flags = 0) noexcept
+        Popup(modal, const char* name, bool* p_open = nullptr, ImGuiWindowFlags flags = 0) noexcept
             : ScopeWrapper(ImGui::BeginPopupModal(name, p_open, flags))
         {}
 
         static Popup
-        Modal(const char* name, bool* p_open = NULL, ImGuiWindowFlags flags = 0) noexcept
+        Modal(const char* name, bool* p_open = nullptr, ImGuiWindowFlags flags = 0) noexcept
         {
             return Popup(modal{}, name, p_open, flags);
         }
@@ -253,7 +253,7 @@ namespace dear
     // Wrapper around ImGui's BeginPopupModal ... EndPopup sequence.
     struct PopupModal : public ScopeWrapper<PopupModal>
     {
-        PopupModal(const char* name, bool* p_open = NULL, ImGuiWindowFlags flags = 0) noexcept
+        PopupModal(const char* name, bool* p_open = nullptr, ImGuiWindowFlags flags = 0) noexcept
             : ScopeWrapper(ImGui::BeginPopupModal(name, p_open, flags))
         {}
         static void dtor() noexcept { ImGui::EndPopup(); }

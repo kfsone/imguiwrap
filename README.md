@@ -148,7 +148,7 @@ void debug_menu()
 {
     dear::Menu("Debug") && []() {
         // Only enable this option if mywindow is being shown.
-        dear::MenuItem("Edit MyWindow flags", NULL, &mywindow_editable, mywindow_visible));
+        dear::MenuItem("Edit MyWindow flags", nullptr, &mywindow_editable, mywindow_visible));
     };
 }
 

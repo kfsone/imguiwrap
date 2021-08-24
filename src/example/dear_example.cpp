@@ -58,7 +58,7 @@ windowFn()
     dear::Begin("Visualizer", &show_visualizer) && []() {
         dear::MainMenuBar() && []() {
             dear::Menu("File") && []() {
-                ImGui::MenuItem("Wibble", NULL, &selected);
+                ImGui::MenuItem("Wibble", nullptr, &selected);
                 ImGui::MenuItem("BOOM");
             };
             dear::Menu("Quitters") && []() {
