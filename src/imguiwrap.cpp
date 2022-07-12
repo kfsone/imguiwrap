@@ -295,17 +295,4 @@ namespace dear
         });
     }
 
-    // _text_impl is a helper for writing Text trampolines for non-c-strings.
-    void _text_impl(const std::function<const char*(char*, size_t)>& formatter) noexcept
-    {
-        ImGuiWindow* window = ImGui::GetCurrentWindow();
-        if (window->SkipItems) {
-            return;
-        }
-
-        ImGuiContext& g = *GImGui;
-        ImGui::TextEx(g.TempBuffer, formatter(g.TempBuffer, IM_ARRAYSIZE(g.TempBuffer)),
-                      ImGuiTextFlags_NoWidthForLargeClippedText);
-    }
-
 }  // namespace dear
