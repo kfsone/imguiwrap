@@ -16,9 +16,10 @@ my_render_fn()
 	}
 
     dear::Begin("Window 2", nullptr, ImGuiWindowFlags_AlwaysAutoResize) && []() {
-        static constexpr size_t                             boarddim = 3;
-        static std::array<std::string, boarddim * boarddim> board{"X", "O", "O", "O", "X",
-                                                                  "O", "O", "X", " "};
+        static constexpr size_t boarddim = 3;
+		// Seed the board text.
+		using BoardText = std::array<std::string, boarddim * boarddim>;
+        static const BoardText board{"X", "O", "O", "O", "X", "O", "O", "X", " "};
         dear::Table("0s and Xs", 3, ImGuiTableFlags_Borders) && []() {
             for (const auto& box : board) {
                 ImGui::TableNextColumn();
@@ -36,7 +37,7 @@ int
 main(int, const char**)
 {
 #if __cplusplus__ >= 202000ULL
-    ImGuiWrapConfig config{
+    const ImGuiWrapConfig config{
         .windowTitle_ = "Basic Example",
         .width_       = 1280,
         .height_      = 600,
@@ -46,7 +47,7 @@ main(int, const char**)
         .startDark_   = false,  // default is true
     };
 #else
-    ImGuiWrapConfig config{
+    const ImGuiWrapConfig config{
         "Basic Example", 1280, 640, ImVec4{0.4f, 0.6f, 0.5f, 1.0f},
         false,  // default is true
         false,  // default is true

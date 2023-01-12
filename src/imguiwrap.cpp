@@ -26,7 +26,7 @@ static std::optional<std::pair<int, int>> newSize{};
 static void
 glfw_error_callback(int error, const char* description) noexcept
 {
-    fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+    (void) fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
 // imgui_main initializes an ImGui openGL/glfw backend and then runs
@@ -188,7 +188,7 @@ namespace dear
         flagsWindow(title, showing, [=]() noexcept {
             // Drop-boxes first.
             // Sizing is actually a discrete integer value, shifted 13 bits into the flag.
-            int    sizeFlag     = *flags & ImGuiTableFlags_SizingMask_;
+            const int sizeFlag = *flags & ImGuiTableFlags_SizingMask_;
             size_t sizeSelected = 0;
             for (size_t i = 1; i < sizes.size(); i++) {
                 if (sizes[i].flag == sizeFlag) {
