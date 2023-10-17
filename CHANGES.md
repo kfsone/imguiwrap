@@ -1,3 +1,6 @@
+v1.2.3 2023/10/17 (thanks to lilggamegenius)
+- Improved compiler checks for Windows
+
 v1.2.2 2021/08/24
 - imgui refresh affecting gl3w:
 -- imgui now uses its own implementation of gl3w,
