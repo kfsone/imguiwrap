@@ -57,6 +57,11 @@ imgui_main(const ImGuiWrapConfig& config, const ImGuiWrapperFn& mainFn) noexcept
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // Required on Mac
 #endif
 
+#ifdef IMGUI_HAS_VIEWPORT
+	glfwWindowHint(GLFW_VISIBLE, static_cast<int>(!config.hideMainWindow_));
+	/// TODO: If the main window is hidden, should we bother setting window information if it can't be seen?
+#endif
+
     // Create window with graphics context
     GLFWwindow* window =
         glfwCreateWindow(config.width_, config.height_, config.windowTitle_, nullptr, nullptr);
@@ -75,7 +80,26 @@ imgui_main(const ImGuiWrapConfig& config, const ImGuiWrapperFn& mainFn) noexcept
             ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
     }
 
-    ImGui::StyleColorsDark();
+#ifdef IMGUI_HAS_DOCK
+	if(config.enableDocking_){
+		ImGui::GetIO().ConfigFlags |=
+				ImGuiConfigFlags_DockingEnable;  // Enable Docking
+	}
+#endif
+
+#ifdef IMGUI_HAS_VIEWPORT
+	if(config.enableViewport_){
+		ImGui::GetIO().ConfigFlags |=
+				ImGuiConfigFlags_ViewportsEnable;  // Enable Docking
+	}
+	ImGui::GetIO().ConfigViewportsNoAutoMerge = !config.enableViewportAutoMerge_;
+#endif
+
+    if(config.startDark_){
+		ImGui::StyleColorsDark();
+	} else {
+		ImGui::StyleColorsLight();
+	}
 
     // Setup Platform/Renderer backends
     /// TODO: Needs to be based on cmake config.
@@ -122,6 +146,14 @@ imgui_main(const ImGuiWrapConfig& config, const ImGuiWrapperFn& mainFn) noexcept
 
         // swap the render/draw buffers so the user can see this frame.
         glfwSwapBuffers(window);
+
+#ifdef IMGUI_HAS_VIEWPORT
+		// Update and Render additional Platform Windows
+		if((ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) != 0){
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
+#endif
 
         // change the native (host) window size if requested.
         if (newSize.has_value()) {

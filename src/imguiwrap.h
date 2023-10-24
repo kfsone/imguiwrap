@@ -39,6 +39,25 @@ struct ImGuiWrapConfig
 
     // startDark_ enables StyleColorsDark after creating the window.
     bool startDark_{true};
+
+#ifdef IMGUI_HAS_DOCK
+	// enableDocking_ enables windows to dock with each other
+	bool enableDocking_{false};
+#endif
+
+#ifdef IMGUI_HAS_VIEWPORT
+	// enableViewport_ enables windows to be pulled out of the main window and exist independently
+	bool enableViewport_{false};
+
+	// enableViewportAutoMerge_ lets windows merge with the main window if dragged within its bounds.
+	// Disabling this forces the windows to be independent
+	bool enableViewportAutoMerge_{true};
+
+	// hideMainWindow_ sets the main window to be invisible.
+	// This is only useful if enableViewportAutoMerge_ is false as otherwise nothing is displayed
+	/// TODO: Perhaps enforce this in code somewhere?
+	bool hideMainWindow_{false};
+#endif
 };
 
 // imgui_main implements a main-loop that constructs a GL window and calls the supplied
