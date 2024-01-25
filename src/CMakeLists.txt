@@ -40,7 +40,15 @@ add_library(
 target_include_directories(
 	imguiwrap
 
-	PUBLIC
+	SYSTEM PUBLIC
+
+	${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_include_directories(
+	imguiwrap
+
+	PRIVATE
 
 	${CMAKE_CURRENT_SOURCE_DIR}
 )
