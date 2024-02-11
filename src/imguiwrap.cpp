@@ -33,7 +33,7 @@ glfw_error_callback(int error, const char* description) noexcept
 // the passed ImGuiWrapperFn repeatedly until the std::optional it
 // returns has a value, which is then returned as the exit code.
 int
-imgui_main(const ImGuiWrapConfig& config, const ImGuiWrapperFn& mainFn) noexcept
+imgui_main(const ImGuiWrapConfig& config, const ImGuiWrapperFn& mainFn, const ImGuiWrapperInitFn &initFn) noexcept
 {
     // Setup window
     glfwSetErrorCallback(glfw_error_callback);
@@ -105,6 +105,10 @@ imgui_main(const ImGuiWrapConfig& config, const ImGuiWrapperFn& mainFn) noexcept
     /// TODO: Needs to be based on cmake config.
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
+
+	// User Init Function
+	/// TODO: Double check if there's a better place to call this
+	initFn();
 
     // Main loop
     const auto&        clearColor = config.clearColor_;
