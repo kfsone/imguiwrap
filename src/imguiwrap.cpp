@@ -186,8 +186,8 @@ flagsWindow(const char* title, bool* showing, const std::function<void(void)>& i
     }
 
     constexpr ImGuiWindowFlags editWindowFlags = ImGuiWindowFlags_NoResize |
-                                                 ImGuiWindowFlags_NoFocusOnAppearing |
-                                                 ImGuiWindowFlags_AlwaysUseWindowPadding;
+                                                 ImGuiWindowFlags_NoFocusOnAppearing;
+                                                 //ImGuiWindowFlags_AlwaysUseWindowPadding;
 
     dear::Begin(title, showing, editWindowFlags) && impl;
 }
@@ -292,8 +292,8 @@ namespace dear
                                  ImGuiWindowFlags_AlwaysVerticalScrollbar);
             ImGui::CheckboxFlags("AlwaysHorizontalScrollbar", flags,
                                  ImGuiWindowFlags_AlwaysHorizontalScrollbar);
-            ImGui::CheckboxFlags("AlwaysUseWindowPadding", flags,
-                                 ImGuiWindowFlags_AlwaysUseWindowPadding);
+            //ImGui::CheckboxFlags("AlwaysUseWindowPadding", flags,
+            //                     ImGuiWindowFlags_AlwaysUseWindowPadding);
             ImGui::CheckboxFlags("NoNavInputs", flags, ImGuiWindowFlags_NoNavInputs);
             ImGui::CheckboxFlags("NoNavFocus", flags, ImGuiWindowFlags_NoNavFocus);
             ImGui::CheckboxFlags("UnsavedDocument", flags, ImGuiWindowFlags_UnsavedDocument);

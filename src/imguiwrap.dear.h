@@ -96,17 +96,18 @@ namespace dear
     // Wrapper for ImGui::BeginChild ... EndChild, which will always call EndChild.
     struct Child : public ScopeWrapper<Child, true>
     {
-        Child(const char* title, const ImVec2& size = Zero, bool border = false,
+        Child(const char* title, const ImVec2& size = Zero, ImGuiChildFlags child_flags = 0,
               ImGuiWindowFlags flags = 0) noexcept
-            : ScopeWrapper(ImGui::BeginChild(title, size, border, flags))
+            : ScopeWrapper(ImGui::BeginChild(title, size, child_flags, flags))
         {}
-        Child(ImGuiID id, const ImVec2& size = Zero, bool border = false,
+        Child(ImGuiID id, const ImVec2& size = Zero, ImGuiChildFlags child_flags = 0,
               ImGuiWindowFlags flags = 0) noexcept
-            : ScopeWrapper(ImGui::BeginChild(id, size, border, flags))
+            : ScopeWrapper(ImGui::BeginChild(id, size, child_flags, flags))
         {}
         static void dtor() noexcept { ImGui::EndChild(); }
     };
 
+#ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
     // Wrapper for ImGui::BeginChildFrame ... EndChildFrame, which will always call EndChildFrame.
     struct ChildFrame : public ScopeWrapper<ChildFrame, true>
     {
@@ -116,6 +117,7 @@ namespace dear
         {}
         static void dtor() noexcept { ImGui::EndChildFrame(); }
     };
+#endif
 
     // Wrapper for ImGui::BeginGroup ... EndGroup which will always call EndGroup.
     struct Group : public ScopeWrapper<Group, true>
@@ -179,7 +181,7 @@ namespace dear
     // Wrapper for ImGui::Begin...EndToolTip.
     struct Tooltip : public ScopeWrapper<Tooltip>
     {
-        Tooltip() noexcept : ScopeWrapper(true) { ImGui::BeginTooltip(); }
+        Tooltip(bool enabled = true) noexcept : ScopeWrapper(enabled && ImGui::BeginTooltip()) {  }
         static void dtor() noexcept { ImGui::EndTooltip(); }
     };
 
