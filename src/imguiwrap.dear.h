@@ -219,6 +219,31 @@ namespace dear
         }
     };
 
+	// Wrapper for ImGui::TreeNode...ImGui::TreePop.
+	// See also SeparatedTreeNode.
+	struct TreeNodeEx : public ScopeWrapper<TreeNodeEx>
+	{
+		template<typename... Args>
+		TreeNodeEx(Args&&... args) noexcept
+			: ScopeWrapper(ImGui::TreeNodeEx(std::forward<Args>(args)...))
+		{}
+		static void dtor() noexcept { ImGui::TreePop(); }
+	};
+
+	// Wrapper around a TreeNode followed by a Separator (it's a fairly common sequence).
+	struct SeparatedTreeNodeEx : public ScopeWrapper<SeparatedTreeNodeEx>
+	{
+		template<typename... Args>
+		SeparatedTreeNodeEx(Args&&... args) noexcept
+			: ScopeWrapper(ImGui::TreeNodeEx(std::forward<Args>(args)...))
+		{}
+		static void dtor() noexcept
+		{
+			ImGui::TreePop();
+			ImGui::Separator();
+		}
+	};
+
     // Popup provides the stock wrapper around ImGui::BeginPopup...ImGui::EndPopup as well as two
     // methods of instantiating a modal, for those who want modality to be a property fo Popup
     // rather than a discrete type.
@@ -299,7 +324,7 @@ namespace dear
     // Wrapper for BeginTooltip predicated on the previous item being hovered.
     struct ItemTooltip : public ScopeWrapper<ItemTooltip>
     {
-        ItemTooltip(ImGuiHoveredFlags flags = 0) noexcept
+        ItemTooltip(ImGuiHoveredFlags flags = ImGuiHoveredFlags_ForTooltip) noexcept
             : ScopeWrapper(ImGui::IsItemHovered(flags))
         {
             if (ok_)
@@ -307,6 +332,34 @@ namespace dear
         }
         static void dtor() noexcept { ImGui::EndTooltip(); }
     };
+
+	struct WithID : public ScopeWrapper<WithID>
+	{
+		template<typename... Args>
+		WithID(Args&&... args) noexcept : ScopeWrapper(true)
+		{
+			ImGui::PushID(std::forward<Args>(args)...);
+		}
+		static void dtor() noexcept
+		{
+			ImGui::PopID();
+		}
+	};
+
+	struct Disabled : public ScopeWrapper<Disabled>
+	{
+
+		Disabled(bool disabled) noexcept : ScopeWrapper(true)
+		{
+			ImGui::BeginDisabled(disabled); // Ideally we would only call this if disabled is true, but because dtor is static, we can't keep track of state
+		}
+		static void dtor() noexcept
+		{
+			ImGui::EndDisabled();
+		}
+	};
+
+
 
 //// Text helpers
 
