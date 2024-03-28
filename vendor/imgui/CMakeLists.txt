@@ -46,11 +46,11 @@ add_library (
 target_include_directories (
 	imgui
 
-	PUBLIC
+	SYSTEM PUBLIC
 
 	${CMAKE_CURRENT_SOURCE_DIR}/src
 	${CMAKE_CURRENT_SOURCE_DIR}/src/backends
-	${IMGUI_GLFW_PATH}/include
+	$<$<BOOL:${IMGUI_GLFW_PATH}>:${IMGUI_GLFW_PATH}/include>
 )
 
 target_link_libraries (

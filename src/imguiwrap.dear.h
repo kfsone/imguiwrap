@@ -96,17 +96,18 @@ namespace dear
     // Wrapper for ImGui::BeginChild ... EndChild, which will always call EndChild.
     struct Child : public ScopeWrapper<Child, true>
     {
-        Child(const char* title, const ImVec2& size = Zero, bool border = false,
+        Child(const char* title, const ImVec2& size = Zero, ImGuiChildFlags child_flags = 0,
               ImGuiWindowFlags flags = 0) noexcept
-            : ScopeWrapper(ImGui::BeginChild(title, size, border, flags))
+            : ScopeWrapper(ImGui::BeginChild(title, size, child_flags, flags))
         {}
-        Child(ImGuiID id, const ImVec2& size = Zero, bool border = false,
+        Child(ImGuiID id, const ImVec2& size = Zero, ImGuiChildFlags child_flags = 0,
               ImGuiWindowFlags flags = 0) noexcept
-            : ScopeWrapper(ImGui::BeginChild(id, size, border, flags))
+            : ScopeWrapper(ImGui::BeginChild(id, size, child_flags, flags))
         {}
         static void dtor() noexcept { ImGui::EndChild(); }
     };
 
+#ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
     // Wrapper for ImGui::BeginChildFrame ... EndChildFrame, which will always call EndChildFrame.
     struct ChildFrame : public ScopeWrapper<ChildFrame, true>
     {
@@ -116,6 +117,7 @@ namespace dear
         {}
         static void dtor() noexcept { ImGui::EndChildFrame(); }
     };
+#endif
 
     // Wrapper for ImGui::BeginGroup ... EndGroup which will always call EndGroup.
     struct Group : public ScopeWrapper<Group, true>
@@ -179,7 +181,7 @@ namespace dear
     // Wrapper for ImGui::Begin...EndToolTip.
     struct Tooltip : public ScopeWrapper<Tooltip>
     {
-        Tooltip() noexcept : ScopeWrapper(true) { ImGui::BeginTooltip(); }
+        Tooltip(bool enabled = true) noexcept : ScopeWrapper(enabled && ImGui::BeginTooltip()) {  }
         static void dtor() noexcept { ImGui::EndTooltip(); }
     };
 
@@ -216,6 +218,31 @@ namespace dear
             ImGui::Separator();
         }
     };
+
+	// Wrapper for ImGui::TreeNode...ImGui::TreePop.
+	// See also SeparatedTreeNode.
+	struct TreeNodeEx : public ScopeWrapper<TreeNodeEx>
+	{
+		template<typename... Args>
+		TreeNodeEx(Args&&... args) noexcept
+			: ScopeWrapper(ImGui::TreeNodeEx(std::forward<Args>(args)...))
+		{}
+		static void dtor() noexcept { ImGui::TreePop(); }
+	};
+
+	// Wrapper around a TreeNode followed by a Separator (it's a fairly common sequence).
+	struct SeparatedTreeNodeEx : public ScopeWrapper<SeparatedTreeNodeEx>
+	{
+		template<typename... Args>
+		SeparatedTreeNodeEx(Args&&... args) noexcept
+			: ScopeWrapper(ImGui::TreeNodeEx(std::forward<Args>(args)...))
+		{}
+		static void dtor() noexcept
+		{
+			ImGui::TreePop();
+			ImGui::Separator();
+		}
+	};
 
     // Popup provides the stock wrapper around ImGui::BeginPopup...ImGui::EndPopup as well as two
     // methods of instantiating a modal, for those who want modality to be a property fo Popup
@@ -297,7 +324,7 @@ namespace dear
     // Wrapper for BeginTooltip predicated on the previous item being hovered.
     struct ItemTooltip : public ScopeWrapper<ItemTooltip>
     {
-        ItemTooltip(ImGuiHoveredFlags flags = 0) noexcept
+        ItemTooltip(ImGuiHoveredFlags flags = ImGuiHoveredFlags_ForTooltip) noexcept
             : ScopeWrapper(ImGui::IsItemHovered(flags))
         {
             if (ok_)
@@ -305,6 +332,34 @@ namespace dear
         }
         static void dtor() noexcept { ImGui::EndTooltip(); }
     };
+
+	struct WithID : public ScopeWrapper<WithID>
+	{
+		template<typename... Args>
+		WithID(Args&&... args) noexcept : ScopeWrapper(true)
+		{
+			ImGui::PushID(std::forward<Args>(args)...);
+		}
+		static void dtor() noexcept
+		{
+			ImGui::PopID();
+		}
+	};
+
+	struct Disabled : public ScopeWrapper<Disabled>
+	{
+
+		Disabled(bool disabled) noexcept : ScopeWrapper(true)
+		{
+			ImGui::BeginDisabled(disabled); // Ideally we would only call this if disabled is true, but because dtor is static, we can't keep track of state
+		}
+		static void dtor() noexcept
+		{
+			ImGui::EndDisabled();
+		}
+	};
+
+
 
 //// Text helpers
 

@@ -33,7 +33,7 @@ glfw_error_callback(int error, const char* description) noexcept
 // the passed ImGuiWrapperFn repeatedly until the std::optional it
 // returns has a value, which is then returned as the exit code.
 int
-imgui_main(const ImGuiWrapConfig& config, const ImGuiWrapperFn& mainFn) noexcept
+imgui_main(const ImGuiWrapConfig& config, const ImGuiWrapperFn& mainFn, const ImGuiWrapperInitFn &initFn) noexcept
 {
     // Setup window
     glfwSetErrorCallback(glfw_error_callback);
@@ -105,6 +105,10 @@ imgui_main(const ImGuiWrapConfig& config, const ImGuiWrapperFn& mainFn) noexcept
     /// TODO: Needs to be based on cmake config.
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
+
+	// User Init Function
+	/// TODO: Double check if there's a better place to call this
+	initFn();
 
     // Main loop
     const auto&        clearColor = config.clearColor_;
@@ -182,8 +186,8 @@ flagsWindow(const char* title, bool* showing, const std::function<void(void)>& i
     }
 
     constexpr ImGuiWindowFlags editWindowFlags = ImGuiWindowFlags_NoResize |
-                                                 ImGuiWindowFlags_NoFocusOnAppearing |
-                                                 ImGuiWindowFlags_AlwaysUseWindowPadding;
+                                                 ImGuiWindowFlags_NoFocusOnAppearing;
+                                                 //ImGuiWindowFlags_AlwaysUseWindowPadding;
 
     dear::Begin(title, showing, editWindowFlags) && impl;
 }
@@ -288,8 +292,8 @@ namespace dear
                                  ImGuiWindowFlags_AlwaysVerticalScrollbar);
             ImGui::CheckboxFlags("AlwaysHorizontalScrollbar", flags,
                                  ImGuiWindowFlags_AlwaysHorizontalScrollbar);
-            ImGui::CheckboxFlags("AlwaysUseWindowPadding", flags,
-                                 ImGuiWindowFlags_AlwaysUseWindowPadding);
+            //ImGui::CheckboxFlags("AlwaysUseWindowPadding", flags,
+            //                     ImGuiWindowFlags_AlwaysUseWindowPadding);
             ImGui::CheckboxFlags("NoNavInputs", flags, ImGuiWindowFlags_NoNavInputs);
             ImGui::CheckboxFlags("NoNavFocus", flags, ImGuiWindowFlags_NoNavFocus);
             ImGui::CheckboxFlags("UnsavedDocument", flags, ImGuiWindowFlags_UnsavedDocument);
